@@ -1,5 +1,7 @@
 package co.uk.travelChat;
 
+import co.uk.travelChat.model.Account;
+import co.uk.travelChat.repository.AccountCrudRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

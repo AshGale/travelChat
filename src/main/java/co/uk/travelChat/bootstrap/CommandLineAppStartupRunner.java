@@ -1,12 +1,12 @@
-package co.uk.travelChat;
+package co.uk.travelChat.bootstrap;
 
+import co.uk.travelChat.model.Account;
+import co.uk.travelChat.repository.AccountCrudRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
-
-import java.util.Arrays;
 
 @Component
 public class CommandLineAppStartupRunner implements CommandLineRunner {
@@ -19,13 +19,13 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
 
     @Override
     public void run(String...args) throws Exception {
-        logger.info("Application started with command-line arguments: {} . \n To kill this application, press Ctrl + C.", Arrays.toString(args));
+        logger.info("Application started ");
 
-        accountCrudRepository.save(new Account(null, "InitAccount", 10D)).subscribe();
+        Mono<Account> savedAccount = accountCrudRepository.save(new Account(null, "InitAccount", 10D));
+        logger.info("Saved to Db: " + savedAccount.block().toString());
 
         Mono<Account> initAccont = accountCrudRepository.findFirstByOwner("InitAccount");
-
-        logger.info("Account from DB: " + initAccont.block().toString());
+        logger.info("Found from Db: " + initAccont.block().toString());
 
     }
 

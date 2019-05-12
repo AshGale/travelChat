@@ -28,7 +28,7 @@ public class AccountCrudRepositoryManualTest {
 
         StepVerifier.create(accountFlux.last())
                 .assertNext(account -> {
-                    assertEquals("Bill", account.getOwner());
+                    assertEquals("Bill", account.getName());
                     assertEquals(Double.valueOf(12.3) , account.getValue());
                     assertNotNull(account.getId());
                 })
@@ -37,13 +37,13 @@ public class AccountCrudRepositoryManualTest {
     }
 
     @Test
-    public void givenOwner_whenFindFirstByOwner_thenFindAccount() {
+    public void givenName_whenFindFirstByName_thenFindAccount() {
         repository.save(new Account(null, "Bill", 12.3)).block();
-        Mono<Account> accountMono = repository.findFirstByOwner("Bill");
+        Mono<Account> accountMono = repository.findFirstByName("Bill");
 
         StepVerifier.create(accountMono)
                 .assertNext(account -> {
-                    assertEquals("Bill", account.getOwner());
+                    assertEquals("Bill", account.getName());
                     assertEquals(Double.valueOf(12.3) , account.getValue());
                     assertNotNull(account.getId());
                 })

@@ -16,7 +16,7 @@ public class Account {
 
     @Id
     private String id;
-    private String owner;
+    private String name;
     private Double value;
 
     // getters and setters

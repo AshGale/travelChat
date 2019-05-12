@@ -11,5 +11,5 @@ public interface AccountCrudRepository
         extends ReactiveCrudRepository<Account, String> {
 
     Flux<Account> findAllByValue(double value);
-    Mono<Account> findFirstByOwner(String owner);
+    Mono<Account> findFirstByName(String name);
 }

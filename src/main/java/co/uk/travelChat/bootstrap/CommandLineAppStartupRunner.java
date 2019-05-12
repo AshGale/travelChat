@@ -8,6 +8,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Component
 public class CommandLineAppStartupRunner implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(CommandLineAppStartupRunner.class);
@@ -21,10 +24,18 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     public void run(String...args) throws Exception {
         logger.info("Application started ");
 
-        Mono<Account> savedAccount = accountCrudRepository.save(new Account(null, "InitAccount", 10D));
+        Map<Integer, Account> accountMap = new LinkedHashMap<>();
+        accountMap.put(1, new Account(null, "Adam", 10D));
+        accountMap.put(2, new Account(null, "Ben", 10D));
+        accountMap.put(3, new Account(null, "Carol", 10D));
+
+
+        accountCrudRepository.deleteAll().subscribe();
+
+        Mono<Account> savedAccount = accountCrudRepository.save(accountMap.get(1));
         logger.info("Saved to Db: " + savedAccount.block().toString());
 
-        Mono<Account> initAccont = accountCrudRepository.findFirstByOwner("InitAccount");
+        Mono<Account> initAccont = accountCrudRepository.findFirstByName(accountMap.get(1).getName());
         logger.info("Found from Db: " + initAccont.block().toString());
 
     }

@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,12 +31,9 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
 
         accountCrudRepository.deleteAll().subscribe();
 
-        Mono<Account> savedAccount = accountCrudRepository.save(accountMap.get(1));
-        logger.info("Saved to Db: " + savedAccount.block().toString());
+        accountMap.forEach((key, account) -> accountCrudRepository.save(account).subscribe());
 
-        Mono<Account> initAccont = accountCrudRepository.findFirstByName(accountMap.get(1).getName());
-        logger.info("Found from Db: " + initAccont.block().toString());
-
+        accountCrudRepository.findAll().doOnNext(System.out::println).subscribe();
     }
 
 

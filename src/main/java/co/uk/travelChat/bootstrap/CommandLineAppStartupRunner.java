@@ -25,9 +25,9 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
         logger.info("Application started ");
 
         Map<Integer, Account> accountMap = new LinkedHashMap<>();
-        accountMap.put(1, new Account(null, "Adam", 10D));
-        accountMap.put(2, new Account(null, "Ben", 10D));
-        accountMap.put(3, new Account(null, "Carol", 10D));
+        accountMap.put(1, new Account(null, "Adam", "andy123"));
+        accountMap.put(2, new Account(null, "Ben", "benny"));
+        accountMap.put(3, new Account(null, "Carol", "carloMeUp"));
 
 
         accountCrudRepository.deleteAll().subscribe();

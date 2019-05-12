@@ -22,14 +22,14 @@ public class AccountCrudRepositoryManualTest {
     AccountCrudRepository repository;
 
     @Test
-    public void givenValue_whenFindAllByValue_thenFindAccount() {
-        repository.save(new Account(null, "Bill", 12.3)).block();
-        Flux<Account> accountFlux = repository.findAllByValue(12.3);
+    public void givenNickname_whenFindAllByNickname_thenFindAccount() {
+        repository.save(new Account(null, "Bill", "bil")).block();
+        Flux<Account> accountFlux = repository.findAllByNickname("bil");
 
         StepVerifier.create(accountFlux.last())
                 .assertNext(account -> {
                     assertEquals("Bill", account.getName());
-                    assertEquals(Double.valueOf(12.3) , account.getValue());
+                    assertEquals("bil" , account.getNickname());
                     assertNotNull(account.getId());
                 })
                 .expectComplete()
@@ -38,13 +38,13 @@ public class AccountCrudRepositoryManualTest {
 
     @Test
     public void givenName_whenFindFirstByName_thenFindAccount() {
-        repository.save(new Account(null, "Bill", 12.3)).block();
+        repository.save(new Account(null, "Bill", "bil")).block();
         Mono<Account> accountMono = repository.findFirstByName("Bill");
 
         StepVerifier.create(accountMono)
                 .assertNext(account -> {
                     assertEquals("Bill", account.getName());
-                    assertEquals(Double.valueOf(12.3) , account.getValue());
+                    assertEquals("bil" , account.getNickname());
                     assertNotNull(account.getId());
                 })
                 .expectComplete()
@@ -56,7 +56,7 @@ public class AccountCrudRepositoryManualTest {
 
     @Test
     public void givenAccount_whenSave_thenSaveAccount() {
-        Mono<Account> accountMono = repository.save(new Account(null, "Bill", 12.3));
+        Mono<Account> accountMono = repository.save(new Account(null, "Bill", "bil"));
 
         StepVerifier
                 .create(accountMono)

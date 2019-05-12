@@ -17,7 +17,7 @@ public class Account {
     @Id
     private String id;
     private String name;
-    private Double value;
+    private String nickname;
 
     // getters and setters
 }

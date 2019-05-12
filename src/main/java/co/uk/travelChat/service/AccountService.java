@@ -32,7 +32,11 @@ public class AccountService {
         return accountCrudRepository.findAllByNickname(nickname);
     }
 
-    public void deleteAccoutById(String id){
-        accountCrudRepository.deleteById(id);
+    public Mono<Void> deleteAccoutById(String id){
+        return accountCrudRepository.deleteById(id);
+    }
+
+    public Flux<Account> getAllAccounts() {
+        return  accountCrudRepository.findAll();
     }
 }

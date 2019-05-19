@@ -16,6 +16,8 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = TravelChatApplication.class)
 public class AccountServiceTest {
 
+    //TODO fix with mockito
+
     @Autowired
     AccountService accountService;
 

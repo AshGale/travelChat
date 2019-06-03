@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class PagesController {
 
     //this loads the index page from temples when / is called
-    @GetMapping("/")
+    @GetMapping({"/","/home","/travelChat"})
     public String index() {
         return "index";
     }

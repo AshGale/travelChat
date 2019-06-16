@@ -5,12 +5,14 @@ import co.uk.travelChat.repository.AccountCrudRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Component
+@Profile("init")
 public class CommandLineAppStartupRunner implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(CommandLineAppStartupRunner.class);
     private final AccountCrudRepository accountCrudRepository;

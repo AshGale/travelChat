@@ -13,8 +13,40 @@ public class PagesController {
         return "index";
     }
 
-//    @GetMapping("/login")
-//    public String login() {
-//        return "login";
-//    }
+    @GetMapping("/commute")
+    public String commute() {
+        return "commute";
+    }
+
+    @GetMapping("/layover")
+    public String layover() {
+        return "layover";
+    }
+
+    @GetMapping("/train")
+    public String train() {
+        return "train";
+    }
+
+    @GetMapping("/bus")
+    public String bus() {
+        return "bus";
+    }
+
+    @GetMapping("/walk")
+    public String walk() {
+        return "walk";
+    }
+
+    @GetMapping("/explore")
+    public String explore() {
+        return "explore";
+    }
+
+    @GetMapping("/my/account")
+    public String my_account() {
+        return "my/account";
+    }
+
+
 }

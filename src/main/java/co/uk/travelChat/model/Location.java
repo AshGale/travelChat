@@ -4,6 +4,8 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotNull;
+
 //https://introcs.cs.princeton.edu/java/44st/Location.java.html
 @Document(collection = "locationTable")
 @Data
@@ -15,6 +17,7 @@ public class Location {
 
     @Id
     private String id;
+    @NotNull
     private String name;
     private double longitude;
     private double latitude;

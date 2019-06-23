@@ -4,6 +4,8 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Map;
+
 @Document(collection="accountTable")
 @Data
 @Getter
@@ -16,6 +18,7 @@ public class Account {
     private String id;
     private String name;
     private String nickname;
+    private Map<Integer, Trip> trips;
 
     @Override
     public String toString() {
@@ -23,6 +26,7 @@ public class Account {
         sb.append("id='").append(id).append('\'');
         sb.append(", name='").append(name).append('\'');
         sb.append(", nickname='").append(nickname).append('\'');
+        sb.append(", trips=").append(trips);
         sb.append('}');
         return sb.toString();
     }

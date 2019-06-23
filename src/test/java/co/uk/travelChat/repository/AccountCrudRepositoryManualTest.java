@@ -11,6 +11,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.LinkedHashMap;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -23,7 +25,7 @@ public class AccountCrudRepositoryManualTest {
 
     @Test
     public void givenNickname_whenFindAllByNickname_thenFindAccount() {
-        repository.save(new Account(null, "Bill", "bil")).block();
+        repository.save(new Account(null, "Bill", "bil", new LinkedHashMap<>())).block();
         Flux<Account> accountFlux = repository.findAllByNickname("bil");
 
         StepVerifier.create(accountFlux.last())
@@ -38,7 +40,7 @@ public class AccountCrudRepositoryManualTest {
 
     @Test
     public void givenName_whenFindFirstByName_thenFindAccount() {
-        repository.save(new Account(null, "Bill", "bil")).block();
+        repository.save(new Account(null, "Bill", "bil", new LinkedHashMap<>())).block();
         Mono<Account> accountMono = repository.findFirstByName("Bill");
 
         StepVerifier.create(accountMono)
@@ -56,7 +58,7 @@ public class AccountCrudRepositoryManualTest {
 
     @Test
     public void givenAccount_whenSave_thenSaveAccount() {
-        Mono<Account> accountMono = repository.save(new Account(null, "Bill", "bil"));
+        Mono<Account> accountMono = repository.save(new Account(null, "Bill", "bil", new LinkedHashMap<>()));
 
         StepVerifier
                 .create(accountMono)

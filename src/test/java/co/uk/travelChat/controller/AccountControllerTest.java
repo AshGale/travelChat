@@ -18,15 +18,17 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.LinkedHashMap;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AccountControllerTest {
 
     private static final String defaultId = "507f1f77bcf86cd799439011";
 
-    private static Account account = new Account(null, "account", "account");
+    private static Account account = new Account(null, "account", "account", new LinkedHashMap<>());
 
-    private static Account savedAccount = new Account(defaultId, "account", "account");
+    private static Account savedAccount = new Account(defaultId, "account", "account", new LinkedHashMap<>());
 
     @Mock
     private AccountCrudRepository accountCrudRepository;
@@ -92,9 +94,9 @@ public class AccountControllerTest {
     public void getAllAccounts() {
 
         Flux<Account> accountFlux = Flux.just(
-                new Account(null, "Adam", "andy123"),
-                new Account(null, "Adam", "andy123"),
-                new Account(null, "Carol", "carloMeUp"));
+                new Account(null, "Adam", "andy123", new LinkedHashMap<>()),
+                new Account(null, "Adam", "andy123", new LinkedHashMap<>()),
+                new Account(null, "Carol", "carloMeUp", new LinkedHashMap<>()));
 
         Mockito.when(accountService.getAllAccounts())
                 .thenReturn(accountFlux);

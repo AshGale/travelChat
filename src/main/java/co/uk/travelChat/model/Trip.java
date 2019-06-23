@@ -21,12 +21,27 @@ public class Trip {
 
     @Id
     private String id;
-    private LocalDateTime leaving;
-    private LocalDateTime arriving;
-    private Location departing;
-    private Location destination;
+    private LocalDateTime leaving;//leaving time for trip
+    private LocalDateTime arriving;//arriving at time
+    private Location departing;//departing location
+    private Location destination;//destination trip end
     private ModeOfTransport mode;
-    private Boolean discoverable;
+    private Boolean discoverable; //  not implemented
+
+//    public Trip(LocalDateTime leaving, Location departing, ModeOfTransport mode) {
+//        this.leaving = leaving;
+//        this.departing = departing;
+//        this.mode = mode;
+//    }
+
+    public Trip(LocalDateTime leaving, LocalDateTime arriving,
+                Location departing, Location destination, ModeOfTransport mode) {
+        this.leaving = leaving;
+        this.arriving = arriving;
+        this.departing = departing;
+        this.destination = destination;
+        this.mode = mode;
+    }
 
     @Override
     public String toString() {

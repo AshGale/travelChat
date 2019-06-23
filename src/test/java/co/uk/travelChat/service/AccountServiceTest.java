@@ -10,6 +10,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.LinkedHashMap;
+
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
@@ -24,7 +26,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountById() {
         String id = "4ecc05e55dd98a436ddcc47c";
-        Account testAccount = new Account(id, "getAccountById" , "getAccountById");
+        Account testAccount = new Account(id, "getAccountById", "getAccountById", new LinkedHashMap<>());
         accountService.saveAccount(testAccount).subscribe();
 
         Mono<Account> savedAccout = accountService.getAccountById(id);
@@ -36,7 +38,7 @@ public class AccountServiceTest {
     @Test
     public void saveAccount() {
         String id = "4ecc05e55dd98a436ddcc47c";
-        Account testAccount = new Account(id, "saveAccount" , "saveAccount");
+        Account testAccount = new Account(id, "saveAccount", "saveAccount", new LinkedHashMap<>());
         accountService.saveAccount(testAccount).subscribe();
 
         Mono<Account> savedAccout = accountService.getAccountById(id);
@@ -49,7 +51,7 @@ public class AccountServiceTest {
     public void getAccountByName() {
         String id = "4ecc05e55dd98a436ddcc47c";
         String name = "namedAccount";
-        Account testAccount = new Account(id, name, name);
+        Account testAccount = new Account(id, name, name, new LinkedHashMap<>());
         accountService.saveAccount(testAccount).subscribe();
 
         Mono<Account> retrivedAccout = accountService.getAccountByName(name);
@@ -62,7 +64,7 @@ public class AccountServiceTest {
     public void getAccountsByNickname() {
         String id = "4ecc05e55dd98a436ddcc47c";
         String nickname = "nicknamedAccount";
-        Account testAccount = new Account(id, nickname, nickname);
+        Account testAccount = new Account(id, nickname, nickname, new LinkedHashMap<>());
         accountService.saveAccount(testAccount).subscribe();
 
         Flux<Account> retrivedAccout = accountService.getAccountsByNickname(nickname);

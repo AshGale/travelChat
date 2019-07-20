@@ -3,9 +3,7 @@ package co.uk.travelChat.controller;
 import co.uk.travelChat.model.Location;
 import co.uk.travelChat.service.LocationService;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -44,5 +42,10 @@ public class LocationController {
                                            @PathParam("longitude") double longitude,
                                            @PathParam("latitude") double latitude) {
         return locationService.getAllByLocation(name, longitude, latitude);
+    }
+
+    @PostMapping
+    public Mono<Location> saveLocation(@RequestBody Location location) {
+        return locationService.saveLocation(location);
     }
 }

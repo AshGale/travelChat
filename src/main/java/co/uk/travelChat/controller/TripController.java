@@ -40,7 +40,9 @@ public class TripController {
     //get all trips where leaving, departing and mode
     //get all trips where leaving, arriving, departing, destination, mode =
     //get all trips where departing and mode
+    //add location to trip
 
+    //Crud
     @PostMapping
     public Mono<Trip> createTrip(@RequestBody Trip trip) {
         return tripService.createTrip(trip);
@@ -56,6 +58,7 @@ public class TripController {
         return tripService.deleteTripById(id);
     }
 
+
     @GetMapping("sameTimePlaceAndMode")// test
     public Flux<Trip> getAllWhereSameTimePlaceAndMode(
             @PathParam("time") String time,
@@ -67,4 +70,22 @@ public class TripController {
 
         return tripService.sameTimePlaceAndMode(dateTime, departing, mode);
     }
+
+    @GetMapping("/findTripsByDeparting")
+    public Flux<Trip> findTripsByDeparting(@PathParam("departing") String departing) {
+        return tripService.findByDeparting_Name(departing);
+    }
+
+    @GetMapping("/findTripsByDestination")
+    public Flux<Trip> findTripsByDestination(@PathParam("destination") String destination) {
+        return tripService.findByDestination_Name(destination);
+    }
+
+    @GetMapping("/findTripsByDepartingAndDestination")
+    public Flux<Trip> findTripsByDestination(@PathParam("departing") String departing,
+                                             @PathParam("destination") String destination) {
+        return tripService.findByDeparting_NameAndDestination_Name(departing, destination);
+    }
+
+
 }

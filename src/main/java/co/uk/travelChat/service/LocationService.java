@@ -30,4 +30,8 @@ public class LocationService {
     public Mono<Location> findFirstByName(String name) {
         return locationCrudRepository.findFirstByName(name);
     }
+
+    public Mono<Location> saveLocation(Location location) {
+        return locationCrudRepository.save(location);
+    }
 }

@@ -14,8 +14,13 @@ public interface TripCrudRepository extends ReactiveCrudRepository<Trip, String>
 
     Flux<Trip> findAllByLeavingAndDepartingNameAndMode(
             LocalDateTime leaving, String departingName, ModeOfTransport mode);
-    Flux<Trip> findAllByLeavingAndArrivingAndDepartingAndDestinationAndMode(
+
+    Flux<Trip> findTripsByLeavingAndArrivingAndDepartingAndDestinationAndMode(
             LocalDateTime leaving, LocalDateTime arriving, Location departing, Location destination, ModeOfTransport mode);
 
-    Flux<Trip> findAllByDeparting(Location departing);
+    Flux<Trip> findByDeparting_Name(String departing);
+
+    Flux<Trip> findByDestination_Name(String destination);
+
+    Flux<Trip> findByDeparting_NameAndDestination_Name(String departing, String destination);
 }

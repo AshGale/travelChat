@@ -1,8 +1,8 @@
 package co.uk.travelChat.service;
 
 import co.uk.travelChat.model.Enums.ModeOfTransport;
-import co.uk.travelChat.model.Location;
 import co.uk.travelChat.model.Trip;
+import co.uk.travelChat.repository.LocationCrudRepository;
 import co.uk.travelChat.repository.TripCrudRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -14,9 +14,11 @@ import java.time.LocalDateTime;
 public class TripService {
 
     private final TripCrudRepository tripCrudRepository;
+    private final LocationCrudRepository locationCrudRepository;
 
-    public TripService(TripCrudRepository tripCrudRepository) {
+    public TripService(TripCrudRepository tripCrudRepository, LocationCrudRepository locationCrudRepository) {
         this.tripCrudRepository = tripCrudRepository;
+        this.locationCrudRepository = locationCrudRepository;
     }
 
     public Flux<Trip> getAllTrips() {
@@ -50,7 +52,15 @@ public class TripService {
                 time, place, mode);
     }
 
-    public Flux<Trip> getAllTripsByLocationName(String locationName) {
-        return tripCrudRepository.findAllByDeparting(new Location(locationName));
+    public Flux<Trip> findByDeparting_Name(String name) {
+        return tripCrudRepository.findByDeparting_Name(name);
+    }
+
+    public Flux<Trip> findByDestination_Name(String name) {
+        return tripCrudRepository.findByDestination_Name(name);
+    }
+
+    public Flux<Trip> findByDeparting_NameAndDestination_Name(String departing, String destination) {
+        return tripCrudRepository.findByDeparting_NameAndDestination_Name(departing, destination);
     }
 }

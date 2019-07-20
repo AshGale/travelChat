@@ -22,6 +22,10 @@ public class Location {
     private double longitude;
     private double latitude;
 
+    public Location(String locationName) {
+        this.name = locationName;
+    }
+
     // return distance between this location and that location
     // measured in statute miles
     public double distanceTo(Location that) {

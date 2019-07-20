@@ -10,11 +10,12 @@ import reactor.core.publisher.Flux;
 import java.time.LocalDateTime;
 
 @Repository
-public interface TripCrudRepository
-        extends ReactiveCrudRepository<Trip, String> {
+public interface TripCrudRepository extends ReactiveCrudRepository<Trip, String> {
 
-    Flux<Trip> findAllByLeavingAndDepartingAndMode(
-            LocalDateTime leaving, Location departing, ModeOfTransport mode);
+    Flux<Trip> findAllByLeavingAndDepartingNameAndMode(
+            LocalDateTime leaving, String departingName, ModeOfTransport mode);
     Flux<Trip> findAllByLeavingAndArrivingAndDepartingAndDestinationAndMode(
             LocalDateTime leaving, LocalDateTime arriving, Location departing, Location destination, ModeOfTransport mode);
+
+    Flux<Trip> findAllByDeparting(Location departing);
 }

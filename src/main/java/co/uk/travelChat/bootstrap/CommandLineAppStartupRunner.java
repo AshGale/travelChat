@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,6 +25,8 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     private final AccountCrudRepository accountCrudRepository;
     private final LocationCrudRepository locationCrudRepository;
     private final TripCrudRepository tripCrudRepository;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private LocalDateTime localDateTime;
 
     public CommandLineAppStartupRunner(AccountCrudRepository accountCrudRepository, LocationCrudRepository locationCrudRepository, TripCrudRepository tripCrudRepository) {
         this.accountCrudRepository = accountCrudRepository;
@@ -33,6 +36,11 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
 
     @Override
     public void run(String...args) throws Exception {
+
+        String time = "2019-01-01 00:00";
+        localDateTime = LocalDateTime.parse(time, formatter);
+//        localDateTime.minusSeconds(localDateTime.getSecond());
+
         loadLocations();
         loadTrips();
         loadAccounts();
@@ -64,7 +72,6 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
 
         locationMap.forEach((key, location) -> locationCrudRepository.save(location).subscribe());
 
-        LocalDateTime localDateTime = LocalDateTime.now();
 
         Map<Integer, Trip> tripMap = new LinkedHashMap<>();
         //london victoria too Brighton
@@ -89,8 +96,6 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
         locationMap.put(2, new Location(null, "London Bridge Station", 51.504527, -0.086392));
         locationMap.put(3, new Location(null, "Dover Priory", 51.126234, 1.304786));//
         locationMap.put(4, new Location(null, "Brighton Railway Station", 50.829467, -0.140960));
-
-        LocalDateTime localDateTime = LocalDateTime.now();
 
         Map<Integer, Trip> tripMap = new LinkedHashMap<>();
         //london victoria too Brighton

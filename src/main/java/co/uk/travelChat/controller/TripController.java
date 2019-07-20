@@ -1,7 +1,6 @@
 package co.uk.travelChat.controller;
 
 import co.uk.travelChat.model.Enums.ModeOfTransport;
-import co.uk.travelChat.model.Location;
 import co.uk.travelChat.model.Trip;
 import co.uk.travelChat.service.TripService;
 import org.springframework.http.MediaType;
@@ -11,6 +10,7 @@ import reactor.core.publisher.Mono;
 
 import javax.websocket.server.PathParam;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping(path = "/trip", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -21,10 +21,6 @@ public class TripController {
     public TripController(TripService tripService) {
         this.tripService = tripService;
     }
-
-    // * testing endpoints
-    //get all trips
-    //delete all trips
 
     @GetMapping
     public Flux<Trip> getAllTrips() {
@@ -60,16 +56,15 @@ public class TripController {
         return tripService.deleteTripById(id);
     }
 
-//    @GetMapping("/sameTimePlaceAndMode")
-//    public Flux<Trip> getAllWhereSameTimePlaceAndMode (@RequestBody Trip trip) {
-//        return tripService.sameTimePlaceAndMode(trip);
-//    }
-
     @GetMapping("sameTimePlaceAndMode")// test
     public Flux<Trip> getAllWhereSameTimePlaceAndMode(
-            @PathParam("time") LocalDateTime time,
-            @PathParam("place") Location place,
+            @PathParam("time") String time,
+            @PathParam("place") String departing,
             @PathParam("mode") ModeOfTransport mode) {
-        return tripService.sameTimePlaceAndMode(time, place, mode);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime dateTime = LocalDateTime.parse(time, formatter);
+
+        return tripService.sameTimePlaceAndMode(dateTime, departing, mode);
     }
 }

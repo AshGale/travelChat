@@ -148,7 +148,7 @@ public class TripServiceTest {
         Flux matchingTrips = tripsFlux.take(2);
 
         LocalDateTime leaving = trip.getLeaving();
-        Location departing = trip.getDeparting();
+        String departing = trip.getDeparting().getName();
         ModeOfTransport mode = trip.getMode();
 
         Mockito.when(tripService.sameTimePlaceAndMode(leaving, departing, mode))

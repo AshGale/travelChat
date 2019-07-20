@@ -45,8 +45,12 @@ public class TripService {
 //    }
 
     public Flux<Trip> sameTimePlaceAndMode(
-            LocalDateTime time, Location place, ModeOfTransport mode) {
-        return tripCrudRepository.findAllByLeavingAndDepartingAndMode(
+            LocalDateTime time, String place, ModeOfTransport mode) {
+        return tripCrudRepository.findAllByLeavingAndDepartingNameAndMode(
                 time, place, mode);
+    }
+
+    public Flux<Trip> getAllTripsByLocationName(String locationName) {
+        return tripCrudRepository.findAllByDeparting(new Location(locationName));
     }
 }

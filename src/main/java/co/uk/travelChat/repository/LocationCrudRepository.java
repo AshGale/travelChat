@@ -10,6 +10,11 @@ import reactor.core.publisher.Mono;
 public interface LocationCrudRepository
         extends ReactiveCrudRepository<Location, String> {
 
-    Mono<Location> findByLongitudeAndLatitude(Double longitude, Double latitude);
-    Flux<Location> findAllByName(String name);
+    Mono<Location> findFirstByName(String name);
+
+    Flux<Location> findLocationsByNameAndLongitudeAndLatitude(String name, double longitude, double latitude);
+
+    Flux<Location> findLocationsByLongitudeAndLatitude(double longitude, double latitude);
+
+    Flux<Location> findLocationsByName(String name);
 }

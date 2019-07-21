@@ -26,7 +26,7 @@ public class AccountCrudRepositoryManualTest {
     @Test
     public void givenNickname_whenFindAllByNickname_thenFindAccount() {
         repository.save(new Account(null, "Bill", "bil", new LinkedHashMap<>())).block();
-        Flux<Account> accountFlux = repository.findAllByNickname("bil");
+        Flux<Account> accountFlux = repository.findAccountsByNickname("bil");
 
         StepVerifier.create(accountFlux.last())
                 .assertNext(account -> {
@@ -41,7 +41,7 @@ public class AccountCrudRepositoryManualTest {
     @Test
     public void givenName_whenFindFirstByName_thenFindAccount() {
         repository.save(new Account(null, "Bill", "bil", new LinkedHashMap<>())).block();
-        Mono<Account> accountMono = repository.findFirstByName("Bill");
+        Mono<Account> accountMono = repository.findByName("Bill");
 
         StepVerifier.create(accountMono)
                 .assertNext(account -> {

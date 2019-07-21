@@ -27,6 +27,8 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     private final TripCrudRepository tripCrudRepository;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private LocalDateTime localDateTime;
+    private Map<Integer, Location> locationMap;
+    private Map<Integer, Trip> tripMap;
 
     public CommandLineAppStartupRunner(AccountCrudRepository accountCrudRepository, LocationCrudRepository locationCrudRepository, TripCrudRepository tripCrudRepository) {
         this.accountCrudRepository = accountCrudRepository;
@@ -49,10 +51,14 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     private void loadLocations() {
         logger.info("Adding Locations");
 
-        Map<Integer, Location> locationMap = new LinkedHashMap<>();
-        locationMap.put(1, new Location(null, "Ha Long", 20.972683d, 107.046353d));
-        locationMap.put(2, new Location(null, "The Great Blue Hole", 17.315786, -87.534782));
-        locationMap.put(3, new Location(null, "Desert Breath", 27.380369d, 33.632155d));
+        locationMap = new LinkedHashMap<>();
+        locationMap.put(1, new Location(null, "London Victoria", 51.495213, -0.143897));
+        locationMap.put(2, new Location(null, "London Bridge Station", 51.504527, -0.086392));
+        locationMap.put(3, new Location(null, "Brighton Railway Station", 50.829467, -0.140960));
+        locationMap.put(4, new Location(null, "Dover Priory", 51.126234, 1.304786));
+        locationMap.put(5, new Location(null, "Ha Long", 20.972683d, 107.046353d));
+        locationMap.put(6, new Location(null, "The Great Blue Hole", 17.315786, -87.534782));
+        locationMap.put(7, new Location(null, "Desert Breath", 27.380369d, 33.632155d));
 
         locationCrudRepository.deleteAll().subscribe();
 
@@ -64,22 +70,28 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     private void loadTrips() {
         logger.info("Adding Trips");
 
-        Map<Integer, Location> locationMap = new LinkedHashMap<>();
-        locationMap.put(1, new Location(null, "London Victoria", 51.495213, -0.143897));
-        locationMap.put(2, new Location(null, "London Bridge Station", 51.504527, -0.086392));
-        locationMap.put(3, new Location(null, "Brighton Railway Station", 50.829467, -0.140960));
-        locationMap.put(4, new Location(null, "Dover Priory", 51.126234, 1.304786));//
+//        Map<Integer, Location> locationMap = new LinkedHashMap<>();
+//        locationMap.put(1, new Location(null, "London Victoria", 51.495213, -0.143897));
+//        locationMap.put(2, new Location(null, "London Bridge Station", 51.504527, -0.086392));
+//        locationMap.put(3, new Location(null, "Brighton Railway Station", 50.829467, -0.140960));
+//        locationMap.put(4, new Location(null, "Dover Priory", 51.126234, 1.304786));//
 
-        locationMap.forEach((key, location) -> locationCrudRepository.save(location).subscribe());
+//        locationMap.forEach((key, location) -> locationCrudRepository.save(location).subscribe());
 
 
-        Map<Integer, Trip> tripMap = new LinkedHashMap<>();
-        //london victoria too Brighton
-        tripMap.put(1, new Trip(null, localDateTime, localDateTime.plusHours(1), locationMap.get(1), locationMap.get(4), ModeOfTransport.Train,true));
-        //london Victoria too London Bridge
-        tripMap.put(2, new Trip(null, localDateTime, localDateTime.plusHours(1), locationMap.get(1), locationMap.get(2), ModeOfTransport.Train,true));
-        //London Bridge to dover
-        tripMap.put(3, new Trip(null, localDateTime, localDateTime.plusHours(1), locationMap.get(2), locationMap.get(3), ModeOfTransport.Train,true));
+        tripMap = new LinkedHashMap<>();
+        //london victoria too London Bridge Station
+        tripMap.put(1, new Trip(null, localDateTime.plusHours(0), localDateTime.plusHours(1), locationMap.get(1), locationMap.get(2), ModeOfTransport.Train, true));
+        //london Victoria too Brighton Railway Station
+        tripMap.put(2, new Trip(null, localDateTime.plusHours(0), localDateTime.plusHours(1), locationMap.get(1), locationMap.get(3), ModeOfTransport.Train, true));
+        //London Bridge to Brighton Railway Station
+        tripMap.put(3, new Trip(null, localDateTime.plusHours(0), localDateTime.plusHours(1), locationMap.get(2), locationMap.get(3), ModeOfTransport.Train, true));
+        //dover to Brighton
+        tripMap.put(4, new Trip(null, localDateTime.plusHours(1), localDateTime.plusHours(2), locationMap.get(4), locationMap.get(3), ModeOfTransport.Train, true));
+        //london victoria too London Bridge Station + 2hr
+        tripMap.put(5, new Trip(null, localDateTime.plusHours(2), localDateTime.plusHours(3), locationMap.get(1), locationMap.get(2), ModeOfTransport.Train, true));
+        //London Bridge Station too london victoria
+        tripMap.put(6, new Trip(null, localDateTime.plusHours(1), localDateTime.plusHours(2), locationMap.get(2), locationMap.get(1), ModeOfTransport.Train, true));
 
         tripCrudRepository.deleteAll().subscribe();
 
@@ -91,20 +103,6 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     private void loadAccounts() {
         logger.info("Adding Accounts");
 
-        Map<Integer, Location> locationMap = new LinkedHashMap<>();
-        locationMap.put(1, new Location(null, "London Victoria", 51.495213, -0.143897));
-        locationMap.put(2, new Location(null, "London Bridge Station", 51.504527, -0.086392));
-        locationMap.put(3, new Location(null, "Dover Priory", 51.126234, 1.304786));//
-        locationMap.put(4, new Location(null, "Brighton Railway Station", 50.829467, -0.140960));
-
-        Map<Integer, Trip> tripMap = new LinkedHashMap<>();
-        //london victoria too Brighton
-        tripMap.put(1, new Trip(null, localDateTime, localDateTime.plusHours(1), locationMap.get(1), locationMap.get(4), ModeOfTransport.Train, true));
-        //london Victoria too London Bridge
-        tripMap.put(2, new Trip(null, localDateTime, localDateTime.plusHours(1), locationMap.get(1), locationMap.get(2), ModeOfTransport.Train, true));
-        //London Bridge to dover
-        tripMap.put(3, new Trip(null, localDateTime, localDateTime.plusHours(1), locationMap.get(2), locationMap.get(3), ModeOfTransport.Train, true));
-
         Map<Integer, Trip> adamsTrips = new LinkedHashMap<>();
         adamsTrips.put(1, tripMap.get(1));
 
@@ -115,10 +113,17 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
         Map<Integer, Trip> carolsTrips = new LinkedHashMap<>();
         carolsTrips.put(1, tripMap.get(3));
 
+        Map<Integer, Trip> deansTrips = new LinkedHashMap<>();
+        deansTrips.put(1, tripMap.get(1));
+        deansTrips.put(2, tripMap.get(6));
+        deansTrips.put(3, tripMap.get(5));
+
         Map<Integer, Account> accountMap = new LinkedHashMap<>();
         accountMap.put(1, new Account(null, "Adam", "andy123", adamsTrips));
         accountMap.put(2, new Account(null, "Ben", "benny", bensTrips));
         accountMap.put(3, new Account(null, "Carol", "carloMeUp", carolsTrips));
+        accountMap.put(4, new Account(null, "Dean", "theDean", deansTrips));
+
 
         accountCrudRepository.deleteAll().subscribe();
 

@@ -65,7 +65,7 @@ public class AccountControllerTest {
     @Test
     public void deleteAccountById() {
 
-        Mockito.when(accountService.deleteAccoutById(defaultId))
+        Mockito.when(accountService.deleteAccountById(defaultId))
                 .thenReturn(Mono.empty());
 
         webTestClient.delete().uri("/account")

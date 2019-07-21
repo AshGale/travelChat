@@ -32,7 +32,7 @@ public class AccountServiceTest {
         Mono<Account> savedAccout = accountService.getAccountById(id);
 
         assertEquals(id, savedAccout.block().getId());
-        accountService.deleteAccoutById(id);
+        accountService.deleteAccountById(id);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class AccountServiceTest {
         Mono<Account> savedAccout = accountService.getAccountById(id);
 
         assertEquals(testAccount, savedAccout.block());
-        accountService.deleteAccoutById(id);
+        accountService.deleteAccountById(id);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class AccountServiceTest {
         Mono<Account> retrivedAccout = accountService.getAccountByName(name);
 
         assertEquals(testAccount, retrivedAccout.block());
-        accountService.deleteAccoutById(id);
+        accountService.deleteAccountById(id);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class AccountServiceTest {
         Flux<Account> retrivedAccout = accountService.getAccountsByNickname(nickname);
 
         assertEquals(testAccount, retrivedAccout.blockFirst());
-        accountService.deleteAccoutById(id);
+        accountService.deleteAccountById(id);
     }
 
 }

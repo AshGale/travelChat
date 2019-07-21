@@ -18,7 +18,7 @@ public class Account {
     private String id;
     private String name;
     private String nickname;
-    private Map<Integer, Trip> trips;
+    private Map<Integer, Trip> trips;//TODO could add as list of keys, not full obj's
 
     @Override
     public String toString() {

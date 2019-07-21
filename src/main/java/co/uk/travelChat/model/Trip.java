@@ -28,7 +28,7 @@ public class Trip {
     private Location destination;//destination trip end
     private ModeOfTransport mode;
     private Boolean discoverable; //  not implemented
-
+    //todo add in who is going on this trip for query optimization
 //    public Trip(LocalDateTime leaving, Location departing, ModeOfTransport mode) {
 //        this.leaving = leaving;
 //        this.departing = departing;

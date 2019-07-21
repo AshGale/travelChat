@@ -25,14 +25,14 @@ public class AccountService {
     }
 
     public Mono<Account> getAccountByName(String name){
-        return accountCrudRepository.findFirstByName(name);
+        return accountCrudRepository.findByName(name);
     }
 
     public Flux<Account> getAccountsByNickname(String nickname){
-        return accountCrudRepository.findAllByNickname(nickname);
+        return accountCrudRepository.findAccountsByNickname(nickname);
     }
 
-    public Mono<Void> deleteAccoutById(String id){
+    public Mono<Void> deleteAccountById(String id) {
         return accountCrudRepository.deleteById(id);
     }
 

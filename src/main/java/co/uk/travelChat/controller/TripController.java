@@ -45,6 +45,7 @@ public class TripController {
     //Crud
     @PostMapping
     public Mono<Trip> createTrip(@RequestBody Trip trip) {
+        //todo add in check to see if trip exists already, if so return that trip
         return tripService.createTrip(trip);
     }
 

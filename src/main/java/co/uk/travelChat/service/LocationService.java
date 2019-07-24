@@ -15,6 +15,22 @@ public class LocationService {
         this.locationCrudRepository = locationCrudRepository;
     }
 
+    public Flux<Location> getAllLocations() {
+        return locationCrudRepository.findAll();
+    }
+
+    public Mono<Location> saveLocation(Location location) {
+        return locationCrudRepository.save(location);
+    }
+
+    public Mono<Void> deleteLocationById(String id) {
+        return locationCrudRepository.deleteById(id);
+    }
+
+    public Mono<Location> getLocationById(String id) {
+        return locationCrudRepository.findById(id);
+    }
+
     public Flux<Location> getAllLocationsByName(String name) {
         return locationCrudRepository.findLocationsByName(name);
     }
@@ -27,11 +43,7 @@ public class LocationService {
         return locationCrudRepository.findLocationsByLongitudeAndLatitude(longitude, latitude);
     }
 
-    public Mono<Location> findFirstByName(String name) {
-        return locationCrudRepository.findFirstByName(name);
-    }
-
-    public Mono<Location> saveLocation(Location location) {
-        return locationCrudRepository.save(location);
+    public Mono<Location> findFirstLocationByName(String name) {
+        return locationCrudRepository.findFirst1ByName(name);
     }
 }

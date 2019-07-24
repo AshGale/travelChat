@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface AccountCrudRepository extends ReactiveCrudRepository<Account, String> {
 
-    Flux<Account> findAccountsByNickname(String Nickname);//TODO add ignore case
+    Mono<Account> findFirst1ByNicknameIgnoreCase(String Nickname);
 
-    Mono<Account> findByName(String name);
+    Flux<Account> findAccountsByName(String name);
 }

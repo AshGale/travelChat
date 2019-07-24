@@ -1,9 +1,11 @@
 package co.uk.travelChat.model;
 
 import lombok.*;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 @Document(collection="accountTable")
@@ -17,8 +19,10 @@ public class Account {
     @Id
     private String id;
     private String name;
+    @NotNull
+    @UniqueElements
     private String nickname;
-    private Map<Integer, Trip> trips;//TODO could add as list of keys, not full obj's
+    private Map<Integer, Trip> trips;//TODO could add as list of keys, not full obj's // here *
 
     @Override
     public String toString() {

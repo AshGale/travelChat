@@ -17,7 +17,7 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    @GetMapping(value = "")
+    @GetMapping()
     public Flux<Account> getAllAccounts() {
         return accountService.getAllAccounts();
     }
@@ -27,7 +27,7 @@ public class AccountController {
         return accountService.getAccountById(id);
     }
 
-    @PostMapping(value = "")
+    @PostMapping()
     public Mono<Account> saveAccount(@RequestBody Account account){
         return accountService.saveAccount(account);
     }
@@ -38,13 +38,13 @@ public class AccountController {
     }
 
     @GetMapping(value = "/name/{name}")
-    public Mono<Account> getAccountByName(@PathVariable String name) {
-        return accountService.getAccountByName(name);
+    public Flux<Account> getAccountByName(@PathVariable String name) {
+        return accountService.getAccountsByName(name);
     }
 
     @GetMapping(value = "/nickname/{nickname}")
-    public Flux<Account> getAccountByNickname(@PathVariable String nickname) {
-        return accountService.getAccountsByNickname(nickname);
+    public Mono<Account> getAccountByNickname(@PathVariable String nickname) {
+        return accountService.getAccountByNickname(nickname);
     }
 
 }

@@ -24,12 +24,12 @@ public class AccountService {
         return accountCrudRepository.save(account);
     }
 
-    public Mono<Account> getAccountByName(String name){
-        return accountCrudRepository.findByName(name);
+    public Flux<Account> getAccountsByName(String name) {
+        return accountCrudRepository.findAccountsByName(name);
     }
 
-    public Flux<Account> getAccountsByNickname(String nickname){
-        return accountCrudRepository.findAccountsByNickname(nickname);
+    public Mono<Account> getAccountByNickname(String nickname) {
+        return accountCrudRepository.findFirst1ByNicknameIgnoreCase(nickname);
     }
 
     public Mono<Void> deleteAccountById(String id) {

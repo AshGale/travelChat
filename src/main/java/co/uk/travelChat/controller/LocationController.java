@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.websocket.server.PathParam;
-
 @RestController
 @RequestMapping(path = "/location", produces = MediaType.APPLICATION_JSON_VALUE)
 public class LocationController {
@@ -19,33 +17,49 @@ public class LocationController {
         this.locationService = locationService;
     }
 
-    @GetMapping("/getAllLocationsByName")
-    public Flux<Location> getAllLocationsByName(@PathParam("name") String name) {
-        return locationService.getAllLocationsByName(name);
-    }
-
-    @GetMapping("/findFirstByName")
-    public Mono<Location> findFirstByName(@PathParam("name") String name) {
-        return locationService.findFirstByName(name);
-    }
-
-
-    @GetMapping("/getAllbyLongitudeAndLatitude")
-    public Flux<Location> getAllbyLongitudeAndLatitude(
-            @PathParam("longitude") double longitude,
-            @PathParam("latitude") double latitude) {
-        return locationService.getAllbyLongitudeAndLatitude(longitude, latitude);
-    }
-
-    @GetMapping("/getAllByLocation")
-    public Flux<Location> getAllbyLocation(@PathParam("name") String name,
-                                           @PathParam("longitude") double longitude,
-                                           @PathParam("latitude") double latitude) {
-        return locationService.getAllByLocation(name, longitude, latitude);
+    @GetMapping
+    public Flux<Location> getAllLocations() {
+        return locationService.getAllLocations();
     }
 
     @PostMapping
     public Mono<Location> saveLocation(@RequestBody Location location) {
         return locationService.saveLocation(location);
+    }
+
+    @DeleteMapping("{id}")
+    public Mono<Void> deleteLocaionById(@PathVariable String id) {
+        //TODO should really be check to see if used, and will requect otherwise
+        return locationService.deleteLocationById(id);
+    }
+
+    @GetMapping("{id}")
+    public Mono<Location> getLocationById(@PathVariable String id) {
+        return locationService.getLocationById(id);
+    }
+
+    @GetMapping("/name/{name}")
+    public Flux<Location> getAllLocationsByName(@PathVariable("name") String name) {
+        return locationService.getAllLocationsByName(name);
+    }
+
+    @GetMapping("/name/{name}/first")
+    public Mono<Location> findFirstByName(@PathVariable("name") String name) {
+        return locationService.findFirstLocationByName(name);
+    }
+
+
+    @GetMapping("/longitude/{longitude}/latitude/{latitude}")
+    public Flux<Location> getAllbyLongitudeAndLatitude(
+            @PathVariable("longitude") double longitude,
+            @PathVariable("latitude") double latitude) {
+        return locationService.getAllbyLongitudeAndLatitude(longitude, latitude);
+    }
+
+    @GetMapping("/longitude/{longitude}/latitude/{latitude}/name/{name}")
+    public Flux<Location> getAllbyLocation(@PathVariable("name") String name,
+                                           @PathVariable("longitude") double longitude,
+                                           @PathVariable("latitude") double latitude) {
+        return locationService.getAllByLocation(name, longitude, latitude);
     }
 }

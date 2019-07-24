@@ -54,9 +54,9 @@ public class AccountServiceTest {
         Account testAccount = new Account(id, name, name, new LinkedHashMap<>());
         accountService.saveAccount(testAccount).subscribe();
 
-        Mono<Account> retrivedAccout = accountService.getAccountByName(name);
+        Flux<Account> retrivedAccout = accountService.getAccountsByName(name);
 
-        assertEquals(testAccount, retrivedAccout.block());
+        assertEquals(testAccount, retrivedAccout.blockFirst());
         accountService.deleteAccountById(id);
     }
 
@@ -67,9 +67,9 @@ public class AccountServiceTest {
         Account testAccount = new Account(id, nickname, nickname, new LinkedHashMap<>());
         accountService.saveAccount(testAccount).subscribe();
 
-        Flux<Account> retrivedAccout = accountService.getAccountsByNickname(nickname);
+        Mono<Account> retrivedAccout = accountService.getAccountByNickname(nickname);
 
-        assertEquals(testAccount, retrivedAccout.blockFirst());
+        assertEquals(testAccount, retrivedAccout.toProcessor().peek());
         accountService.deleteAccountById(id);
     }
 

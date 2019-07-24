@@ -50,11 +50,11 @@ public class TripServiceTest {
 
 
         //london victoria too Brighton
-        tripMap.add(new Trip(null, localDateTime, localDateTime.plusHours(1), locationMap.get(1), locationMap.get(3), ModeOfTransport.Train, true));
+        tripMap.add(new Trip(null, localDateTime, localDateTime.plusHours(1), locationMap.get(1), locationMap.get(3), ModeOfTransport.Train, true, new ArrayList<>()));
         //london Victoria too London Bridge
-        tripMap.add(new Trip(null, localDateTime, localDateTime.plusHours(1), locationMap.get(1), locationMap.get(2), ModeOfTransport.Train, true));
+        tripMap.add(new Trip(null, localDateTime, localDateTime.plusHours(1), locationMap.get(1), locationMap.get(2), ModeOfTransport.Train, true, new ArrayList<>()));
         //London Bridge to dover
-        tripMap.add(new Trip(null, localDateTime, localDateTime.plusHours(1), locationMap.get(2), locationMap.get(3), ModeOfTransport.Train, true));
+        tripMap.add(new Trip(null, localDateTime, localDateTime.plusHours(1), locationMap.get(2), locationMap.get(3), ModeOfTransport.Train, true, new ArrayList<>()));
 
         tripsFlux = Flux.fromIterable(tripMap);
     }

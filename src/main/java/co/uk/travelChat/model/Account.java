@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
-import java.util.Map;
+import java.util.List;
 
 @Document(collection="accountTable")
 @Data
@@ -22,7 +22,7 @@ public class Account {
     @NotNull
     @UniqueElements
     private String nickname;
-    private Map<Integer, Trip> trips;//TODO could add as list of keys, not full obj's // here *
+    private List<String> trips;//TODO could add as list of keys, not full obj's // here *
 
     @Override
     public String toString() {

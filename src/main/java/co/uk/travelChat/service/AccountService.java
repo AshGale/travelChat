@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Service
 public class AccountService {
 
@@ -38,5 +40,14 @@ public class AccountService {
 
     public Flux<Account> getAllAccounts() {
         return  accountCrudRepository.findAll();
+    }
+
+    public Mono<List<String>> getAllTripsForAccountById(String id) {
+        return accountCrudRepository.findById(id).map(account -> account.getTrips());
+    }
+
+    public Mono<List<String>> getAllTripsForAccountByNickname(String nickname) {
+        return accountCrudRepository.findFirst1ByNicknameIgnoreCase(nickname)
+                .map(account -> account.getTrips());
     }
 }

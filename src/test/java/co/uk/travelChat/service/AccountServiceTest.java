@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 
@@ -26,7 +26,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountById() {
         String id = "4ecc05e55dd98a436ddcc47c";
-        Account testAccount = new Account(id, "getAccountById", "getAccountById", new LinkedHashMap<>());
+        Account testAccount = new Account(id, "getAccountById", "getAccountById", new ArrayList<>());
         accountService.saveAccount(testAccount).subscribe();
 
         Mono<Account> savedAccout = accountService.getAccountById(id);
@@ -38,7 +38,7 @@ public class AccountServiceTest {
     @Test
     public void saveAccount() {
         String id = "4ecc05e55dd98a436ddcc47c";
-        Account testAccount = new Account(id, "saveAccount", "saveAccount", new LinkedHashMap<>());
+        Account testAccount = new Account(id, "saveAccount", "saveAccount", new ArrayList<>());
         accountService.saveAccount(testAccount).subscribe();
 
         Mono<Account> savedAccout = accountService.getAccountById(id);
@@ -51,7 +51,7 @@ public class AccountServiceTest {
     public void getAccountByName() {
         String id = "4ecc05e55dd98a436ddcc47c";
         String name = "namedAccount";
-        Account testAccount = new Account(id, name, name, new LinkedHashMap<>());
+        Account testAccount = new Account(id, name, name, new ArrayList<>());
         accountService.saveAccount(testAccount).subscribe();
 
         Flux<Account> retrivedAccout = accountService.getAccountsByName(name);
@@ -64,7 +64,7 @@ public class AccountServiceTest {
     public void getAccountsByNickname() {
         String id = "4ecc05e55dd98a436ddcc47c";
         String nickname = "nicknamedAccount";
-        Account testAccount = new Account(id, nickname, nickname, new LinkedHashMap<>());
+        Account testAccount = new Account(id, nickname, nickname, new ArrayList<>());
         accountService.saveAccount(testAccount).subscribe();
 
         Mono<Account> retrivedAccout = accountService.getAccountByNickname(nickname);

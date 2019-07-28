@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/account", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AccountController {
@@ -46,5 +48,17 @@ public class AccountController {
     public Mono<Account> getAccountByNickname(@PathVariable String nickname) {
         return accountService.getAccountByNickname(nickname);
     }
+
+    @GetMapping(value = "/{id}/trips")
+    public Mono<List<String>> getAllTripsForAccount(@PathVariable String id) {
+        return accountService.getAllTripsForAccountById(id);
+    }
+
+    @GetMapping(value = "/nickname/{nickname}/trips")
+    public Mono<List<String>> getAllTripsForAccountByNickname(@PathVariable String nickname) {
+        return accountService.getAllTripsForAccountByNickname(nickname);
+    }
+
+
 
 }

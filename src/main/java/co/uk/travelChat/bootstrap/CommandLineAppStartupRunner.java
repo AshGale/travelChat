@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -40,12 +41,18 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     @Override
     public void run(String...args) throws Exception {
 
+        //Set up example time
         String time = "2019-01-01 00:00";
         localDateTime = LocalDateTime.parse(time, formatter);
-//        localDateTime.minusSeconds(localDateTime.getSecond());
+
+        accountCrudRepository.deleteAll().subscribe();
+        tripCrudRepository.deleteAll().subscribe();
+        locationCrudRepository.deleteAll().subscribe();
 
         loadLocations();
+        Thread.sleep(100);//this is to ensure the data is loaded correctly
         loadTrips();
+        Thread.sleep(100);//this is to ensure the data is loaded correctly// was getting nulls
         loadAccounts();
     }
 
@@ -61,11 +68,11 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
         locationMap.put(6, new Location(null, "The Great Blue Hole", 17.315786, -87.534782));
         locationMap.put(7, new Location(null, "Desert Breath", 27.380369d, 33.632155d));
 
-        locationCrudRepository.deleteAll().subscribe();
+        locationMap.forEach((key, location) -> locationCrudRepository.save(location)
+                .subscribe(savedTrip -> logger.info(savedTrip.toString())));
 
-        locationMap.forEach((key, location) -> locationCrudRepository.save(location).subscribe());
-
-        locationCrudRepository.findAll().doOnNext(location -> logger.info(location.toString())).subscribe();
+//        locationCrudRepository.findAll().doOnNext(location -> logger.info(location.toString()))
+//                .subscribe(savedLocation -> logger.info(savedLocation.toString()));
     }
 
     private void loadTrips() {
@@ -85,9 +92,8 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
         //London Bridge Station too london victoria
         tripMap.put(6, new Trip(null, localDateTime.plusHours(1), localDateTime.plusHours(2), locationMap.get(2), locationMap.get(1), ModeOfTransport.Train, true, new ArrayList<>()));
 
-        tripCrudRepository.deleteAll().subscribe();
-
-        tripMap.forEach((key, trip) -> tripCrudRepository.save(trip).subscribe());
+        tripMap.forEach((key, trip) -> tripCrudRepository.save(trip)
+                .subscribe(savedTrip -> logger.info(savedTrip.toString())));
 
 //        tripCrudRepository.findAll().doOnNext(trip -> logger.info(trip.toString())).subscribe();
     }
@@ -95,24 +101,24 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     private void loadAccounts() {
         logger.info("Adding Accounts");
 
-        Map<Integer, Trip> adamsTrips = new LinkedHashMap<>();
-        adamsTrips.put(1, tripMap.get(1));
+        List<String> adamsTrips = new ArrayList<>();
+        adamsTrips.add(tripMap.get(1).getId());
         tripMap.get(1).getAttending().add("andy123");
 
-        Map<Integer, Trip> bensTrips = new LinkedHashMap<>();
-        bensTrips.put(1, tripMap.get(1));
-        bensTrips.put(2, tripMap.get(3));
+        List<String> bensTrips = new ArrayList<>();
+        bensTrips.add(tripMap.get(1).getId());
+        bensTrips.add(tripMap.get(3).getId());
         tripMap.get(1).getAttending().add("benny");
         tripMap.get(3).getAttending().add("benny");
 
-        Map<Integer, Trip> carolsTrips = new LinkedHashMap<>();
-        carolsTrips.put(1, tripMap.get(3));
+        List<String> carolsTrips = new ArrayList<>();
+        carolsTrips.add(tripMap.get(3).getId());
         tripMap.get(3).getAttending().add("carloMeUp");
 
-        Map<Integer, Trip> deansTrips = new LinkedHashMap<>();
-        deansTrips.put(1, tripMap.get(1));
-        deansTrips.put(2, tripMap.get(6));
-        deansTrips.put(3, tripMap.get(5));
+        List<String> deansTrips = new ArrayList<>();
+        deansTrips.add(tripMap.get(1).getId());
+        deansTrips.add(tripMap.get(5).getId());
+        deansTrips.add(tripMap.get(6).getId());
         tripMap.get(1).getAttending().add("theDean");
         tripMap.get(5).getAttending().add("theDean");
         tripMap.get(6).getAttending().add("theDean");
@@ -124,14 +130,15 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
         accountMap.put(4, new Account(null, "Dean", "theDean", deansTrips));
 
         //Update trips due to updated
-        tripMap.forEach((key, trip) -> tripCrudRepository.save(trip).subscribe());
-        tripCrudRepository.findAll().doOnNext(trip -> logger.info(trip.toString())).subscribe();
+        logger.info("Updating Trips with Attending");
+        tripMap.forEach((key, trip) -> tripCrudRepository.save(trip)
+                .subscribe(savedTrip -> logger.info(savedTrip.toString())));
+//        tripCrudRepository.findAll().doOnNext(trip -> logger.info(trip.toString())).subscribe();
 
-        accountCrudRepository.deleteAll().subscribe();
+        accountMap.forEach((key, account) -> accountCrudRepository.save(account)
+                .subscribe(savedTrip -> logger.info(savedTrip.toString())));
 
-        accountMap.forEach((key, account) -> accountCrudRepository.save(account).subscribe());
-
-        accountCrudRepository.findAll().doOnNext(account -> logger.info(account.toString())).subscribe();
+//        accountCrudRepository.findAll().doOnNext(account -> logger.info(account.toString())).subscribe();
 }
 
 }

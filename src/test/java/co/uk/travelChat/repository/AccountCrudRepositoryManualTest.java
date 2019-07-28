@@ -11,6 +11,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.ArrayList;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -23,10 +25,10 @@ public class AccountCrudRepositoryManualTest {
 
     @Test
     public void givenNickname_whenFindAllByNickname_thenFindAccount() {
-        repository.save(new Account(null, "Bill", "bil")).block();
-        Flux<Account> accountFlux = repository.findAllByNickname("bil");
+        repository.save(new Account(null, "Bill", "bil", new ArrayList<>())).block();
+        Mono<Account> accountFlux = repository.findFirst1ByNicknameIgnoreCase("bil");
 
-        StepVerifier.create(accountFlux.last())
+        StepVerifier.create(accountFlux)
                 .assertNext(account -> {
                     assertEquals("Bill", account.getName());
                     assertEquals("bil" , account.getNickname());
@@ -38,8 +40,8 @@ public class AccountCrudRepositoryManualTest {
 
     @Test
     public void givenName_whenFindFirstByName_thenFindAccount() {
-        repository.save(new Account(null, "Bill", "bil")).block();
-        Mono<Account> accountMono = repository.findFirstByName("Bill");
+        repository.save(new Account(null, "Bill", "bil", new ArrayList<>())).block();
+        Flux<Account> accountMono = repository.findAccountsByName("Bill");
 
         StepVerifier.create(accountMono)
                 .assertNext(account -> {
@@ -56,7 +58,7 @@ public class AccountCrudRepositoryManualTest {
 
     @Test
     public void givenAccount_whenSave_thenSaveAccount() {
-        Mono<Account> accountMono = repository.save(new Account(null, "Bill", "bil"));
+        Mono<Account> accountMono = repository.save(new Account(null, "Bill", "bil", new ArrayList<>()));
 
         StepVerifier
                 .create(accountMono)

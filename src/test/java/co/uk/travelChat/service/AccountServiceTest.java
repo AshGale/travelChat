@@ -10,6 +10,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
+
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
@@ -24,51 +26,51 @@ public class AccountServiceTest {
     @Test
     public void getAccountById() {
         String id = "4ecc05e55dd98a436ddcc47c";
-        Account testAccount = new Account(id, "getAccountById" , "getAccountById");
+        Account testAccount = new Account(id, "getAccountById", "getAccountById", new ArrayList<>());
         accountService.saveAccount(testAccount).subscribe();
 
         Mono<Account> savedAccout = accountService.getAccountById(id);
 
         assertEquals(id, savedAccout.block().getId());
-        accountService.deleteAccoutById(id);
+        accountService.deleteAccountById(id);
     }
 
     @Test
     public void saveAccount() {
         String id = "4ecc05e55dd98a436ddcc47c";
-        Account testAccount = new Account(id, "saveAccount" , "saveAccount");
+        Account testAccount = new Account(id, "saveAccount", "saveAccount", new ArrayList<>());
         accountService.saveAccount(testAccount).subscribe();
 
         Mono<Account> savedAccout = accountService.getAccountById(id);
 
         assertEquals(testAccount, savedAccout.block());
-        accountService.deleteAccoutById(id);
+        accountService.deleteAccountById(id);
     }
 
     @Test
     public void getAccountByName() {
         String id = "4ecc05e55dd98a436ddcc47c";
         String name = "namedAccount";
-        Account testAccount = new Account(id, name, name);
+        Account testAccount = new Account(id, name, name, new ArrayList<>());
         accountService.saveAccount(testAccount).subscribe();
 
-        Mono<Account> retrivedAccout = accountService.getAccountByName(name);
+        Flux<Account> retrivedAccout = accountService.getAccountsByName(name);
 
-        assertEquals(testAccount, retrivedAccout.block());
-        accountService.deleteAccoutById(id);
+        assertEquals(testAccount, retrivedAccout.blockFirst());
+        accountService.deleteAccountById(id);
     }
 
     @Test
     public void getAccountsByNickname() {
         String id = "4ecc05e55dd98a436ddcc47c";
         String nickname = "nicknamedAccount";
-        Account testAccount = new Account(id, nickname, nickname);
+        Account testAccount = new Account(id, nickname, nickname, new ArrayList<>());
         accountService.saveAccount(testAccount).subscribe();
 
-        Flux<Account> retrivedAccout = accountService.getAccountsByNickname(nickname);
+        Mono<Account> retrivedAccout = accountService.getAccountByNickname(nickname);
 
-        assertEquals(testAccount, retrivedAccout.blockFirst());
-        accountService.deleteAccoutById(id);
+        assertEquals(testAccount, retrivedAccout.toProcessor().peek());
+        accountService.deleteAccountById(id);
     }
 
 }

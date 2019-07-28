@@ -18,15 +18,17 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AccountControllerTest {
 
     private static final String defaultId = "507f1f77bcf86cd799439011";
 
-    private static Account account = new Account(null, "account", "account");
+    private static Account account = new Account(null, "account", "account", new ArrayList<>());
 
-    private static Account savedAccount = new Account(defaultId, "account", "account");
+    private static Account savedAccount = new Account(defaultId, "account", "account", new ArrayList<>());
 
     @Mock
     private AccountCrudRepository accountCrudRepository;
@@ -63,7 +65,7 @@ public class AccountControllerTest {
     @Test
     public void deleteAccountById() {
 
-        Mockito.when(accountService.deleteAccoutById(defaultId))
+        Mockito.when(accountService.deleteAccountById(defaultId))
                 .thenReturn(Mono.empty());
 
         webTestClient.delete().uri("/account")
@@ -92,9 +94,9 @@ public class AccountControllerTest {
     public void getAllAccounts() {
 
         Flux<Account> accountFlux = Flux.just(
-                new Account(null, "Adam", "andy123"),
-                new Account(null, "Adam", "andy123"),
-                new Account(null, "Carol", "carloMeUp"));
+                new Account(null, "Adam", "andy123", new ArrayList<>()),
+                new Account(null, "Adam", "andy123", new ArrayList<>()),
+                new Account(null, "Carol", "carloMeUp", new ArrayList<>()));
 
         Mockito.when(accountService.getAllAccounts())
                 .thenReturn(accountFlux);

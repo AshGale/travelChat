@@ -1,6 +1,5 @@
 package co.uk.travelChat.controller;
 
-import co.uk.travelChat.TravelChatApplication;
 import co.uk.travelChat.model.Account;
 import co.uk.travelChat.repository.AccountCrudRepository;
 import co.uk.travelChat.service.AccountService;
@@ -14,29 +13,25 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = TravelChatApplication.class)
 @DataMongoTest(includeFilters = {@ComponentScan.Filter(Service.class), @ComponentScan.Filter(Controller.class)})
 public class AccountControllerTest {
 
     private static final String defaultId = "507f1f77bcf86cd799439011";
 
-    private static Account testAccount = new Account(null, "account", "account", new ArrayList<>());
+    private static final List<String> tripList = Arrays.asList("507f1f77bcf86cd799439010");
 
-    private static Account savedAccount = new Account(defaultId, "account", "account", new ArrayList<>());
+//    private static Account testAccount = new Account(null, "account", "account", new ArrayList<>());
+
+    private static final Account savedAccount = new Account(defaultId, "account", "account", tripList);
 
     @Autowired
     private AccountCrudRepository accountCrudRepository;
@@ -49,19 +44,60 @@ public class AccountControllerTest {
 
     private WebTestClient webTestClient;
 
+    private List<String> exampleTrips = new ArrayList<>();
+    private Map<Integer, Account> accountMap = new LinkedHashMap<>();
+
     @Before
     public void init() {
         this.webTestClient = WebTestClient.bindToController(new AccountController(accountService)).build();
+
+        //SetupData
+        accountCrudRepository.deleteAll().subscribe();
+        exampleTrips = new ArrayList<>();
+        accountMap = new LinkedHashMap<>();
+
+        accountMap.put(0, new Account("507f1f77bcf86cd799439012", "Adam", "andy123", new ArrayList<>()));
+        exampleTrips.add(ObjectId.get().toString());
+        accountMap.get(0).setTrips(exampleTrips);
+
+        exampleTrips = new ArrayList<>();
+        accountMap.put(1, new Account("507f1f77bcf86cd799439013", "Ben", "benny", new ArrayList<>()));
+        exampleTrips.add(ObjectId.get().toString());
+        exampleTrips.add(ObjectId.get().toString());
+        accountMap.get(1).setTrips(exampleTrips);
+
+        exampleTrips = new ArrayList<>();
+        accountMap.put(2, new Account("507f1f77bcf86cd799439014", "Carol", "carloMeUp", new ArrayList<>()));
+        exampleTrips.add(ObjectId.get().toString());
+        exampleTrips.add(ObjectId.get().toString());
+        accountMap.get(2).setTrips(exampleTrips);
+
+        exampleTrips = new ArrayList<>();
+        accountMap.put(3, new Account("507f1f77bcf86cd799439015", "Dean", "theDean", new ArrayList<>()));
+        exampleTrips.add(ObjectId.get().toString());
+        accountMap.get(3).setTrips(exampleTrips);
+
+        accountMap.forEach((key, account) -> accountCrudRepository.save(account)
+                .subscribe(savedTrip -> System.out.println(savedTrip.toString())));
     }
 
     @Test
-    public void getAccountById() {
-        accountCrudRepository.save(savedAccount).subscribe();
-
-        webTestClient.get().uri("/account/" + defaultId)
+    public void getAllAccounts() {
+        WebTestClient.ListBodySpec<Account> result = webTestClient.get().uri("/account")
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBodyList(Account.class)
+                .hasSize(4)
+                .contains(accountMap.get(2));
+    }
+
+    @Test
+    public void saveAccount() {
+        webTestClient.post().uri("/account")
+                .body(Mono.just(savedAccount), Account.class)
+                .exchange()
+                .expectStatus().isOk()
                 .expectBody(Account.class)
                 .value(account -> {
                     assertEquals(savedAccount.getId(), account.getId());
@@ -72,27 +108,22 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void saveAccount() {
-        webTestClient.post().uri("/account")
-                .body(Mono.just(testAccount), Account.class)
+    public void getAccountById() {
+        webTestClient.get().uri("/account/" + accountMap.get(0).getId())
                 .exchange()
                 .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBody(Account.class)
                 .value(account -> {
-                    assertNotNull(account.getId());
-                    assertEquals(savedAccount.getName(), account.getName());
-                    assertEquals(savedAccount.getNickname(), account.getNickname());
-                    assertEquals(savedAccount.getTrips(), account.getTrips());
+                    assertEquals(accountMap.get(0).getId(), account.getId());
+                    assertEquals(accountMap.get(0).getName(), account.getName());
+                    assertEquals(accountMap.get(0).getNickname(), account.getNickname());
+                    assertEquals(accountMap.get(0).getTrips(), account.getTrips());
                 });
     }
 
     @Test
     public void deleteAccountById() {
-
-        accountCrudRepository.save(savedAccount).subscribe();
-
-        assertNotNull(accountCrudRepository.findById(defaultId));
-
         webTestClient.delete().uri("/account/" + defaultId)
                 .exchange()
                 .expectStatus().isOk()
@@ -105,40 +136,59 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getAllAccounts() {
-        List<String> exampleTrips = new ArrayList<>();
-
-        Map<Integer, Account> accountMap = new LinkedHashMap<>();
-        accountMap.put(1, new Account(null, "Adam", "andy123", new ArrayList<>()));
-        exampleTrips.add(ObjectId.get().toString());
-        accountMap.get(1).setTrips(exampleTrips);
-
-        exampleTrips = new ArrayList<>();
-        accountMap.put(2, new Account(null, "Ben", "benny", new ArrayList<>()));
-        exampleTrips.add(ObjectId.get().toString());
-        exampleTrips.add(ObjectId.get().toString());
-        accountMap.get(2).setTrips(exampleTrips);
-
-        exampleTrips = new ArrayList<>();
-        accountMap.put(3, new Account(null, "Carol", "carloMeUp", new ArrayList<>()));
-        exampleTrips.add(ObjectId.get().toString());
-        exampleTrips.add(ObjectId.get().toString());
-        accountMap.get(3).setTrips(exampleTrips);
-
-        exampleTrips = new ArrayList<>();
-        accountMap.put(4, new Account(null, "Dean", "theDean", new ArrayList<>()));
-        exampleTrips.add(ObjectId.get().toString());
-        accountMap.get(4).setTrips(exampleTrips);
-
-        accountMap.forEach((key, account) -> accountCrudRepository.save(account)
-                .subscribe(savedTrip -> System.out.println(savedTrip.toString())));
-
-        WebTestClient.ListBodySpec<Account> result = webTestClient.get().uri("/account")
+    public void getAccountByName() {
+        webTestClient.get().uri("/account/name/" + accountMap.get(1).getName())
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Account.class)
-                .hasSize(4)
-                .contains(accountMap.get(2));
+                .hasSize(1)
+                .value(account -> {
+                    assertEquals(accountMap.get(1).getId(), account.get(0).getId());
+                    assertEquals(accountMap.get(1).getName(), account.get(0).getName());
+                    assertEquals(accountMap.get(1).getNickname(), account.get(0).getNickname());
+                    assertEquals(accountMap.get(1).getTrips(), account.get(0).getTrips());
+                });
+    }
+
+    @Test
+    public void getAccountByNickname() {
+        webTestClient.get().uri("/account/nickname/" + accountMap.get(2).getNickname())
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody(Account.class)
+                .value(account -> {
+                    assertEquals(accountMap.get(2).getId(), account.getId());
+                    assertEquals(accountMap.get(2).getName(), account.getName());
+                    assertEquals(accountMap.get(2).getNickname(), account.getNickname());
+                    assertEquals(accountMap.get(2).getTrips(), account.getTrips());
+                });
+    }
+
+    @Test
+    public void getAllTripsForAccount() {
+        webTestClient.get().uri("/account/" + accountMap.get(3).getId() + "/trips")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody(List.class)
+                .value(list -> {
+                    assertEquals(accountMap.get(3).getTrips(), list);
+
+                });
+    }
+
+    @Test
+    public void getAllTripsForAccountByNickname() {
+        webTestClient.get().uri("/account/nickname/" + accountMap.get(0).getNickname() + "/trips")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody(List.class)
+                .value(list -> {
+                    assertEquals(accountMap.get(0).getTrips(), list);
+
+                });
     }
 }

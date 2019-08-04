@@ -39,6 +39,7 @@ public class LocationServiceTest {
         locationCrudRepository.deleteAll().subscribe();
         locationCrudRepository.save(new Location(
                 DEFAULT_ID, DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE)).subscribe();
+        Thread.sleep(100);//this is to ensure the data is loaded correctl
     }
 
     @Test

@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 public class LocationCrudRepositoryTest {
 
+    private static final String DEFAULT_ID = "5d46b4c5966049317459ea70";
     private static final String DEFAULT_NAME = "London Victoria";
     private static final Double DEFAULT_LONGITUDE = 51.495213;
     private static final Double DEFAULT_LATITUDE = -0.143897;
@@ -25,11 +26,11 @@ public class LocationCrudRepositoryTest {
     LocationCrudRepository locationCrudRepository;
 
     @Before
-    public void setUp() {
-        locationCrudRepository.deleteAll();
+    public void setUp() throws Exception {
+        locationCrudRepository.deleteAll().subscribe();
         locationCrudRepository.save(new Location(
                 "5d46b4c5966049317459ea70", DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE)).subscribe();
-        System.out.println("SetUp location data");
+        Thread.sleep(100);//this is to ensure the data is loaded correctl
     }
 
     @Test

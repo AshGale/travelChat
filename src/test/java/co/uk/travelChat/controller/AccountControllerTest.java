@@ -83,7 +83,7 @@ public class AccountControllerTest {
 
     @Test
     public void getAllAccounts() {
-        WebTestClient.ListBodySpec<Account> result = webTestClient.get().uri("/account")
+        webTestClient.get().uri("/account")
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)

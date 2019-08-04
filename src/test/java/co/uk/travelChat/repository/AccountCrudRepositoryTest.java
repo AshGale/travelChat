@@ -17,7 +17,7 @@ import static org.junit.Assert.assertNotNull;
 
 @DataMongoTest
 @RunWith(SpringRunner.class)
-public class AccountCrudRepositoryManualTest {
+public class AccountCrudRepositoryTest {
 
     @Autowired
     AccountCrudRepository repository;

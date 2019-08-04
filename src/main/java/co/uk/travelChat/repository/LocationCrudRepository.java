@@ -7,8 +7,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
-public interface LocationCrudRepository
-        extends ReactiveCrudRepository<Location, String> {
+public interface LocationCrudRepository extends ReactiveCrudRepository<Location, String> {
 
     Mono<Location> findFirst1ByName(String name);
 

@@ -29,7 +29,7 @@ public class LocationCrudRepositoryTest {
     public void setUp() throws Exception {
         locationCrudRepository.deleteAll().subscribe();
         locationCrudRepository.save(new Location(
-                "5d46b4c5966049317459ea70", DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE)).subscribe();
+                DEFAULT_ID, DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE)).subscribe();
         Thread.sleep(100);//this is to ensure the data is loaded correctl
     }
 

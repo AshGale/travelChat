@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
@@ -31,12 +32,8 @@ public class Trip {
     private ModeOfTransport mode;
     private Boolean discoverable; //  not implemented
     private List<String> attending;
-    //todo add in who is going on this trip for query optimization
-//    public Trip(LocalDateTime leaving, Location departing, ModeOfTransport mode) {
-//        this.leaving = leaving;
-//        this.departing = departing;
-//        this.mode = mode;
-//    }
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public Trip(LocalDateTime leaving, LocalDateTime arriving,
                 Location departing, Location destination, ModeOfTransport mode) {
@@ -47,5 +44,14 @@ public class Trip {
         this.mode = mode;
     }
 
+    //todo move out to util class
+    public static String formatToSting(LocalDateTime localDateTime) {
+        return localDateTime.format(formatter);
+
+    }
+
+    public static DateTimeFormatter getFormatter() {
+        return formatter;
+    }
 
 }

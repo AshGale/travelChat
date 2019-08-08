@@ -1,76 +1,113 @@
 package co.uk.travelChat.service;
 
-import co.uk.travelChat.TravelChatApplication;
 import co.uk.travelChat.model.Account;
+import co.uk.travelChat.repository.AccountCrudRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Service;
 import org.springframework.test.context.junit4.SpringRunner;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 
+@DataMongoTest(includeFilters = @ComponentScan.Filter(Service.class))
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = TravelChatApplication.class)
 public class AccountServiceTest {
-
-    //TODO fix with mockito
 
     @Autowired
     AccountService accountService;
 
+    @MockBean
+    AccountCrudRepository accountCrudRepository;
+
+    private static final String ID = "4ecc05e55dd98a436ddcc47c";
+    private static final Account testAccount = new Account(ID, "getAccountById", "getAccountById", new ArrayList<>());
+
+    @Before
+    public void init() {
+
+    }
+
     @Test
     public void getAccountById() {
-        String id = "4ecc05e55dd98a436ddcc47c";
-        Account testAccount = new Account(id, "getAccountById", "getAccountById", new ArrayList<>());
-        accountService.saveAccount(testAccount).subscribe();
+        Mockito.when(accountCrudRepository.findById(ID))
+                .thenReturn(Mono.just(testAccount));
 
-        Mono<Account> savedAccout = accountService.getAccountById(id);
+        Mono<Account> result = accountService.getAccountById(ID);
 
-        assertEquals(id, savedAccout.block().getId());
-        accountService.deleteAccountById(id);
+        StepVerifier.create(result)
+                .assertNext(account -> {
+                    assertEquals(testAccount.getId(), account.getId());
+                    assertEquals(testAccount.getName(), account.getName());
+                    assertEquals(testAccount.getNickname(), account.getNickname());
+                    assertEquals(testAccount.getTrips(), account.getTrips());
+                })
+                .expectComplete()
+                .verify();
     }
 
     @Test
     public void saveAccount() {
-        String id = "4ecc05e55dd98a436ddcc47c";
-        Account testAccount = new Account(id, "saveAccount", "saveAccount", new ArrayList<>());
-        accountService.saveAccount(testAccount).subscribe();
+        Mockito.when(accountCrudRepository.save(testAccount))
+                .thenReturn(Mono.just(testAccount));
 
-        Mono<Account> savedAccout = accountService.getAccountById(id);
+        Mono<Account> result = accountService.saveAccount(testAccount);
 
-        assertEquals(testAccount, savedAccout.block());
-        accountService.deleteAccountById(id);
+        StepVerifier.create(result)
+                .assertNext(account -> {
+                    assertEquals(testAccount.getId(), account.getId());
+                    assertEquals(testAccount.getName(), account.getName());
+                    assertEquals(testAccount.getNickname(), account.getNickname());
+                    assertEquals(testAccount.getTrips(), account.getTrips());
+                })
+                .expectComplete()
+                .verify();
     }
 
     @Test
     public void getAccountByName() {
-        String id = "4ecc05e55dd98a436ddcc47c";
-        String name = "namedAccount";
-        Account testAccount = new Account(id, name, name, new ArrayList<>());
-        accountService.saveAccount(testAccount).subscribe();
+        Mockito.when(accountCrudRepository.findAccountsByName(testAccount.getName()))
+                .thenReturn(Flux.just(testAccount));
 
-        Flux<Account> retrivedAccout = accountService.getAccountsByName(name);
+        Flux<Account> result = accountService.getAccountsByName(testAccount.getName());
 
-        assertEquals(testAccount, retrivedAccout.blockFirst());
-        accountService.deleteAccountById(id);
+        StepVerifier.create(result)
+                .assertNext(account -> {
+                    assertEquals(testAccount.getId(), account.getId());
+                    assertEquals(testAccount.getName(), account.getName());
+                    assertEquals(testAccount.getNickname(), account.getNickname());
+                    assertEquals(testAccount.getTrips(), account.getTrips());
+                })
+                .expectComplete()
+                .verify();
     }
 
     @Test
     public void getAccountsByNickname() {
-        String id = "4ecc05e55dd98a436ddcc47c";
-        String nickname = "nicknamedAccount";
-        Account testAccount = new Account(id, nickname, nickname, new ArrayList<>());
-        accountService.saveAccount(testAccount).subscribe();
+        Mockito.when(accountCrudRepository.findFirst1ByNicknameIgnoreCase(testAccount.getNickname()))
+                .thenReturn(Mono.just(testAccount));
 
-        Mono<Account> retrivedAccout = accountService.getAccountByNickname(nickname);
+        Mono<Account> result = accountService.getAccountByNickname(testAccount.getNickname());
 
-        assertEquals(testAccount, retrivedAccout.toProcessor().peek());
-        accountService.deleteAccountById(id);
+        StepVerifier.create(result)
+                .assertNext(account -> {
+                    assertEquals(testAccount.getId(), account.getId());
+                    assertEquals(testAccount.getName(), account.getName());
+                    assertEquals(testAccount.getNickname(), account.getNickname());
+                    assertEquals(testAccount.getTrips(), account.getTrips());
+                })
+                .expectComplete()
+                .verify();
     }
 
 }

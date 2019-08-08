@@ -1,19 +1,15 @@
-package co.uk.travelChat.service;
+package co.uk.travelChat.repository;
 
 import co.uk.travelChat.model.Enums.ModeOfTransport;
 import co.uk.travelChat.model.Location;
 import co.uk.travelChat.model.Trip;
-import co.uk.travelChat.repository.TripCrudRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Service;
 import org.springframework.test.context.junit4.SpringRunner;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDateTime;
@@ -22,16 +18,14 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-@DataMongoTest(includeFilters = @ComponentScan.Filter(Service.class))
+@DataMongoTest
 @RunWith(SpringRunner.class)
-public class TripServiceTest {
+public class TripCrudRepositoryTest {
 
     private static final LocalDateTime DEFAULT_LEAVING = LocalDateTime.now();
     private static final LocalDateTime DEFAULT_ARRIVING = DEFAULT_LEAVING.plusHours(1);
 
     private static final String DEFAULT_ID = "5d46b4c5966049317459ea50";
-    private static final String SAVE_ID = "5d46b4c5966049317459ea51";
-    private static final String DELETE_ID = "5d46b4c5966049317459ea52";
 
     private static final String DEPARTING_ID = "5d46b4c5966049317459ea70";
     private static final String DEPARTING_NAME = "London Victoria";
@@ -57,11 +51,8 @@ public class TripServiceTest {
     @Autowired
     private TripCrudRepository tripCrudRepository;
 
-    @Autowired
-    private TripService tripService;
-
     @Before
-    public void init() throws Exception {
+    public void setUp() throws Exception {
         tripCrudRepository.deleteAll().subscribe();
         tripCrudRepository.save(
                 new Trip(DEFAULT_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING,
@@ -71,60 +62,10 @@ public class TripServiceTest {
     }
 
     @Test
-    public void getAllTrips() {
-        Flux<Trip> result = tripService.getAllTrips();
-
-        StepVerifier.create(result)
-                .assertNext(trip -> {
-                    assertEquals(DEFAULT_ID, trip.getId());
-                    assertEquals(DEFAULT_LEAVING, trip.getLeaving());
-                    assertEquals(DEFAULT_ARRIVING, trip.getArriving());
-                    assertEquals(DEFAULT_DEPARTING, trip.getDeparting());
-                    assertEquals(DEFAULT_DESTINATION, trip.getDestination());
-                    assertEquals(DEFAULT_MODE_OF_TRANSPORT, trip.getMode());
-                    assertEquals(DEFAULT_DISCOVERALBE, trip.getDiscoverable());
-                    assertEquals(DEFAULT_ATTENDING, trip.getAttending());
-                })
-                .expectComplete()
-                .verify();
-    }
-
-//    @Test
-//    public void deleteAllTrips() {
-//        tripCrudRepository.save( new Trip(DELETE_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING,
-//                DEFAULT_DESTINATION, DEFAULT_MODE_OF_TRANSPORT, DEFAULT_DISCOVERALBE, DEFAULT_ATTENDING)).subscribe();
-//
-//        Mono<Void> result = tripService.deleteAllTrips();
-//
-//        StepVerifier.create(result)
-//                .expectComplete()
-//                .verify();
-//    }
-
-    @Test
-    public void createTrip() {
-        Mono<Trip> result = tripService.createTrip(
-                new Trip(SAVE_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING, DEFAULT_DESTINATION,
-                        DEFAULT_MODE_OF_TRANSPORT, DEFAULT_DISCOVERALBE, DEFAULT_ATTENDING));
-
-        StepVerifier.create(result)
-                .assertNext(trip -> {
-                    assertEquals(SAVE_ID, trip.getId());
-                    assertEquals(DEFAULT_LEAVING, trip.getLeaving());
-                    assertEquals(DEFAULT_ARRIVING, trip.getArriving());
-                    assertEquals(DEFAULT_DEPARTING, trip.getDeparting());
-                    assertEquals(DEFAULT_DESTINATION, trip.getDestination());
-                    assertEquals(DEFAULT_MODE_OF_TRANSPORT, trip.getMode());
-                    assertEquals(DEFAULT_DISCOVERALBE, trip.getDiscoverable());
-                    assertEquals(DEFAULT_ATTENDING, trip.getAttending());
-                })
-                .expectComplete()
-                .verify();
-    }
-
-    @Test
-    public void getTripById() {
-        Mono<Trip> result = tripService.getTripById(DEFAULT_ID);
+    public void findAllByLeavingAndDepartingNameAndMode() {
+        Flux<Trip> result = tripCrudRepository.findAllByLeavingAndDepartingNameAndMode(
+                DEFAULT_LEAVING, DEFAULT_DEPARTING.getName(), DEFAULT_MODE_OF_TRANSPORT
+        );
 
         StepVerifier.create(result)
                 .assertNext(trip -> {
@@ -142,20 +83,8 @@ public class TripServiceTest {
     }
 
     @Test
-    public void deleteTripById() {
-        tripCrudRepository.save(new Trip(DELETE_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING,
-                DEFAULT_DESTINATION, DEFAULT_MODE_OF_TRANSPORT, DEFAULT_DISCOVERALBE, DEFAULT_ATTENDING)).subscribe();
-
-        Mono<Void> result = tripService.deleteTripById(DELETE_ID);
-
-        StepVerifier.create(result)
-                .expectComplete()
-                .verify();
-    }
-
-    @Test
-    public void sameTimePlaceAndMode() {
-        Flux<Trip> result = tripService.sameTimePlaceAndMode(DEFAULT_LEAVING, DEFAULT_DEPARTING.getName(), DEFAULT_MODE_OF_TRANSPORT);
+    public void findByDeparting_Name() {
+        Flux<Trip> result = tripCrudRepository.findByDeparting_Name(DEFAULT_DEPARTING.getName());
 
         StepVerifier.create(result)
                 .assertNext(trip -> {
@@ -170,6 +99,105 @@ public class TripServiceTest {
                 })
                 .expectComplete()
                 .verify();
-
     }
+
+    @Test
+    public void findByDestination_Name() {
+        Flux<Trip> result = tripCrudRepository.findByDestination_Name(DEFAULT_DESTINATION.getName());
+
+        StepVerifier.create(result)
+                .assertNext(trip -> {
+                    assertEquals(DEFAULT_ID, trip.getId());
+                    assertEquals(DEFAULT_LEAVING, trip.getLeaving());
+                    assertEquals(DEFAULT_ARRIVING, trip.getArriving());
+                    assertEquals(DEFAULT_DEPARTING, trip.getDeparting());
+                    assertEquals(DEFAULT_DESTINATION, trip.getDestination());
+                    assertEquals(DEFAULT_MODE_OF_TRANSPORT, trip.getMode());
+                    assertEquals(DEFAULT_DISCOVERALBE, trip.getDiscoverable());
+                    assertEquals(DEFAULT_ATTENDING, trip.getAttending());
+                })
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    public void findByDeparting_NameAndDestination_Name() {
+        Flux<Trip> result = tripCrudRepository.findByDeparting_NameAndDestination_Name(
+                DEFAULT_DEPARTING.getName(), DEFAULT_DESTINATION.getName());
+
+        StepVerifier.create(result)
+                .assertNext(trip -> {
+                    assertEquals(DEFAULT_ID, trip.getId());
+                    assertEquals(DEFAULT_LEAVING, trip.getLeaving());
+                    assertEquals(DEFAULT_ARRIVING, trip.getArriving());
+                    assertEquals(DEFAULT_DEPARTING, trip.getDeparting());
+                    assertEquals(DEFAULT_DESTINATION, trip.getDestination());
+                    assertEquals(DEFAULT_MODE_OF_TRANSPORT, trip.getMode());
+                    assertEquals(DEFAULT_DISCOVERALBE, trip.getDiscoverable());
+                    assertEquals(DEFAULT_ATTENDING, trip.getAttending());
+                })
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    public void findByDeparting_NameAndLeaving() {
+        Flux<Trip> result = tripCrudRepository.findByDeparting_NameAndLeaving(
+                DEFAULT_DEPARTING.getName(), DEFAULT_LEAVING);
+
+        StepVerifier.create(result)
+                .assertNext(trip -> {
+                    assertEquals(DEFAULT_ID, trip.getId());
+                    assertEquals(DEFAULT_LEAVING, trip.getLeaving());
+                    assertEquals(DEFAULT_ARRIVING, trip.getArriving());
+                    assertEquals(DEFAULT_DEPARTING, trip.getDeparting());
+                    assertEquals(DEFAULT_DESTINATION, trip.getDestination());
+                    assertEquals(DEFAULT_MODE_OF_TRANSPORT, trip.getMode());
+                    assertEquals(DEFAULT_DISCOVERALBE, trip.getDiscoverable());
+                    assertEquals(DEFAULT_ATTENDING, trip.getAttending());
+                })
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    public void findByDestination_NameAndArriving() {
+        Flux<Trip> result = tripCrudRepository.findByDestination_NameAndArriving(
+                DEFAULT_DESTINATION.getName(), DEFAULT_ARRIVING);
+
+        StepVerifier.create(result)
+                .assertNext(trip -> {
+                    assertEquals(DEFAULT_ID, trip.getId());
+                    assertEquals(DEFAULT_LEAVING, trip.getLeaving());
+                    assertEquals(DEFAULT_ARRIVING, trip.getArriving());
+                    assertEquals(DEFAULT_DEPARTING, trip.getDeparting());
+                    assertEquals(DEFAULT_DESTINATION, trip.getDestination());
+                    assertEquals(DEFAULT_MODE_OF_TRANSPORT, trip.getMode());
+                    assertEquals(DEFAULT_DISCOVERALBE, trip.getDiscoverable());
+                    assertEquals(DEFAULT_ATTENDING, trip.getAttending());
+                })
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    public void findByDeparting_NameAndLeavingAndDestination_NameAndArriving() {
+        Flux<Trip> result = tripCrudRepository.findByDeparting_NameAndLeavingAndDestination_NameAndArriving(
+                DEFAULT_DEPARTING.getName(), DEFAULT_LEAVING, DEFAULT_DESTINATION.getName(), DEFAULT_ARRIVING);
+
+        StepVerifier.create(result)
+                .assertNext(trip -> {
+                    assertEquals(DEFAULT_ID, trip.getId());
+                    assertEquals(DEFAULT_LEAVING, trip.getLeaving());
+                    assertEquals(DEFAULT_ARRIVING, trip.getArriving());
+                    assertEquals(DEFAULT_DEPARTING, trip.getDeparting());
+                    assertEquals(DEFAULT_DESTINATION, trip.getDestination());
+                    assertEquals(DEFAULT_MODE_OF_TRANSPORT, trip.getMode());
+                    assertEquals(DEFAULT_DISCOVERALBE, trip.getDiscoverable());
+                    assertEquals(DEFAULT_ATTENDING, trip.getAttending());
+                })
+                .expectComplete()
+                .verify();
+    }
+
 }

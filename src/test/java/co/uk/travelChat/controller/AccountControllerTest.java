@@ -3,110 +3,192 @@ package co.uk.travelChat.controller;
 import co.uk.travelChat.model.Account;
 import co.uk.travelChat.repository.AccountCrudRepository;
 import co.uk.travelChat.service.AccountService;
+import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DataMongoTest(includeFilters = {@ComponentScan.Filter(Service.class), @ComponentScan.Filter(Controller.class)})
 public class AccountControllerTest {
 
     private static final String defaultId = "507f1f77bcf86cd799439011";
 
-    private static Account account = new Account(null, "account", "account", new ArrayList<>());
+    private static final List<String> tripList = Arrays.asList("507f1f77bcf86cd799439010");
 
-    private static Account savedAccount = new Account(defaultId, "account", "account", new ArrayList<>());
+//    private static Account testAccount = new Account(null, "account", "account", new ArrayList<>());
 
-    @Mock
-    private AccountCrudRepository accountCrudRepository;
-
-    @Mock
-    private AccountService accountService;
-
-    @InjectMocks
-    private AccountController underTest;
+    private static final Account savedAccount = new Account(defaultId, "account", "account", tripList);
 
     @Autowired
+    private AccountCrudRepository accountCrudRepository;
+
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private AccountController underTest;
+
     private WebTestClient webTestClient;
+
+    private List<String> exampleTrips = new ArrayList<>();
+    private Map<Integer, Account> accountMap = new LinkedHashMap<>();
 
     @Before
     public void init() {
-        MockitoAnnotations.initMocks(this);
         this.webTestClient = WebTestClient.bindToController(new AccountController(accountService)).build();
-    }
 
-    @Test
-    public void saveAccount() {
+        //SetupData
+        accountCrudRepository.deleteAll().subscribe();
+        exampleTrips = new ArrayList<>();
+        accountMap = new LinkedHashMap<>();
 
-        Mockito.when(accountService.saveAccount(account))
-                .thenReturn(Mono.just(savedAccount));
+        accountMap.put(0, new Account("507f1f77bcf86cd799439012", "Adam", "andy123", new ArrayList<>()));
+        exampleTrips.add(ObjectId.get().toString());
+        accountMap.get(0).setTrips(exampleTrips);
 
-        webTestClient.post().uri("/account")
-                .body(Mono.just(account), Account.class)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(Account.class)
-                .isEqualTo(savedAccount);
-    }
+        exampleTrips = new ArrayList<>();
+        accountMap.put(1, new Account("507f1f77bcf86cd799439013", "Ben", "benny", new ArrayList<>()));
+        exampleTrips.add(ObjectId.get().toString());
+        exampleTrips.add(ObjectId.get().toString());
+        accountMap.get(1).setTrips(exampleTrips);
 
-    @Test
-    public void deleteAccountById() {
+        exampleTrips = new ArrayList<>();
+        accountMap.put(2, new Account("507f1f77bcf86cd799439014", "Carol", "carloMeUp", new ArrayList<>()));
+        exampleTrips.add(ObjectId.get().toString());
+        exampleTrips.add(ObjectId.get().toString());
+        accountMap.get(2).setTrips(exampleTrips);
 
-        Mockito.when(accountService.deleteAccountById(defaultId))
-                .thenReturn(Mono.empty());
+        exampleTrips = new ArrayList<>();
+        accountMap.put(3, new Account("507f1f77bcf86cd799439015", "Dean", "theDean", new ArrayList<>()));
+        exampleTrips.add(ObjectId.get().toString());
+        accountMap.get(3).setTrips(exampleTrips);
 
-        webTestClient.delete().uri("/account")
-                .exchange()
-                .expectBody()
-                .isEmpty();
-
-    }
-
-    @Test
-    public void getAccountById() {
-
-        Mockito.when(accountService.getAccountById(defaultId))
-                .thenReturn(Mono.just(savedAccount));
-
-        webTestClient.get().uri("/account/" + defaultId)
-                .exchange()
-                .expectStatus().isOk()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(Account.class)
-                .isEqualTo(savedAccount);
-
+        accountMap.forEach((key, account) -> accountCrudRepository.save(account)
+                .subscribe(savedTrip -> System.out.println(savedTrip.toString())));
     }
 
     @Test
     public void getAllAccounts() {
-
-        Flux<Account> accountFlux = Flux.just(
-                new Account(null, "Adam", "andy123", new ArrayList<>()),
-                new Account(null, "Adam", "andy123", new ArrayList<>()),
-                new Account(null, "Carol", "carloMeUp", new ArrayList<>()));
-
-        Mockito.when(accountService.getAllAccounts())
-                .thenReturn(accountFlux);
-
-        WebTestClient.ListBodySpec<Account> result = webTestClient.get().uri("/account")
+        webTestClient.get().uri("/account")
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Account.class)
-                .hasSize(3)
-                .contains(accountFlux.blockFirst());
+                .hasSize(4)
+                .contains(accountMap.get(2));
+    }
+
+    @Test
+    public void saveAccount() {
+        webTestClient.post().uri("/account")
+                .body(Mono.just(savedAccount), Account.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Account.class)
+                .value(account -> {
+                    assertEquals(savedAccount.getId(), account.getId());
+                    assertEquals(savedAccount.getName(), account.getName());
+                    assertEquals(savedAccount.getNickname(), account.getNickname());
+                    assertEquals(savedAccount.getTrips(), account.getTrips());
+                });
+    }
+
+    @Test
+    public void getAccountById() {
+        webTestClient.get().uri("/account/" + accountMap.get(0).getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody(Account.class)
+                .value(account -> {
+                    assertEquals(accountMap.get(0).getId(), account.getId());
+                    assertEquals(accountMap.get(0).getName(), account.getName());
+                    assertEquals(accountMap.get(0).getNickname(), account.getNickname());
+                    assertEquals(accountMap.get(0).getTrips(), account.getTrips());
+                });
+    }
+
+    @Test
+    public void deleteAccountById() {
+        webTestClient.delete().uri("/account/" + defaultId)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Void.class);
+
+        webTestClient.get().uri("/account/" + defaultId)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Void.class);
+    }
+
+    @Test
+    public void getAccountByName() {
+        webTestClient.get().uri("/account/name/" + accountMap.get(1).getName())
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBodyList(Account.class)
+                .hasSize(1)
+                .value(account -> {
+                    assertEquals(accountMap.get(1).getId(), account.get(0).getId());
+                    assertEquals(accountMap.get(1).getName(), account.get(0).getName());
+                    assertEquals(accountMap.get(1).getNickname(), account.get(0).getNickname());
+                    assertEquals(accountMap.get(1).getTrips(), account.get(0).getTrips());
+                });
+    }
+
+    @Test
+    public void getAccountByNickname() {
+        webTestClient.get().uri("/account/nickname/" + accountMap.get(2).getNickname())
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody(Account.class)
+                .value(account -> {
+                    assertEquals(accountMap.get(2).getId(), account.getId());
+                    assertEquals(accountMap.get(2).getName(), account.getName());
+                    assertEquals(accountMap.get(2).getNickname(), account.getNickname());
+                    assertEquals(accountMap.get(2).getTrips(), account.getTrips());
+                });
+    }
+
+    @Test
+    public void getAllTripsForAccount() {
+        webTestClient.get().uri("/account/" + accountMap.get(3).getId() + "/trips")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody(List.class)
+                .value(list -> {
+                    assertEquals(accountMap.get(3).getTrips(), list);
+
+                });
+    }
+
+    @Test
+    public void getAllTripsForAccountByNickname() {
+        webTestClient.get().uri("/account/nickname/" + accountMap.get(0).getNickname() + "/trips")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody(List.class)
+                .value(list -> {
+                    assertEquals(accountMap.get(0).getTrips(), list);
+
+                });
     }
 }

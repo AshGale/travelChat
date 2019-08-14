@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@Document(collection="accountTable")
+@Document(collection = "accountTable")
 @Data
 @Getter
 @Setter

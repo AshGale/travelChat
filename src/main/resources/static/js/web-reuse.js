@@ -5,18 +5,11 @@ const host = `http://localhost:8080/`;//can update this when deployed
 
 const close_button_margin = '40px';
 
-const Mapping = {
-    url: ``,
-    http_method: `GET`,
-    description: ``,
-    artifacts: []
-};
-
-const Artifact = {
+const Account = {
     name : ``,
-    description : ``,
-    content_type : ``,
-    content : ``
+    nickname : ``,
+    trips : [],
+    id : ``
 };
 
 function post_json(url = ``, data = ``) {
@@ -30,11 +23,11 @@ function post_json(url = ``, data = ``) {
     })
         .then(response => {
 
-            //console.log(response.status + ` ` + response.url);
+            console.log(response.status + ` ` + response.url);
             return response.json();
         })
         .catch(error => {
-            // console.error('Error:', error)
+             console.error('Error:', error)
             return error;
         });
 }

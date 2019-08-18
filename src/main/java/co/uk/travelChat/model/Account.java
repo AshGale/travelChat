@@ -20,9 +20,9 @@ public class Account {
     private String id;
     private String name;
     @NotNull
-    @UniqueElements
+    @UniqueElements //todo fix
     private String nickname;
-    private List<String> trips;//TODO could add as list of keys, not full obj's // here *
+    private List<String> trips;
 
     @Override
     public String toString() {

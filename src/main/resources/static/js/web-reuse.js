@@ -9,7 +9,7 @@ const Account = {
     name : ``,
     nickname : ``,
     trips : [],
-    id : ``
+    id : null
 };
 
 function post_json(url = ``, data = ``) {

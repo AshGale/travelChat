@@ -57,6 +57,33 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </style>
 <meta content="width=device-width, initial-scale=1" name="viewport">
 <body>
@@ -99,8 +126,7 @@
     </nav>
 </header>
 
-<div>Account</div>
-<form id="form-account" class="form">
+<form id="form-account" class="form pt-2">
     <fieldset>
 
         <!-- Form Name -->
@@ -110,34 +136,43 @@
         <div class="form-group">
             <label class="col-md-4 control-label" for="account_id">Account_id</label>
             <div class="col-md-4">
-                <input id="account_id" name="account_id" type="text" placeholder="" class="form-control input-md"
-                       title="id of account to update">
+                <input id="account_id" name="account_id" type="text" placeholder="primary key"
+                       class="form-control input-md" title="id of account to update eg: 507f1f77bcf86cd799439000">
             </div>
 
             <!-- Text input-->
             <label class="col-md-4 control-label" for="name-input">First Name</label>
             <div class="col-md-4">
-                <input id="name-input" name="name-input" type="text" placeholder="Name eg Adam"
-                       class="form-control input-md" title="Please enter your Real name">
+                <input id="name-input" name="name-input" type="text" placeholder="What is the Name for the Account"
+                       class="form-control input-md" title="Please enter your Actual Name, protected">
             </div>
 
             <!-- Text input-->
             <label class="col-md-4 control-label" for="nickname-input">Nickname</label>
             <div class="col-md-4">
-                <input id="nickname-input" name="nickname-input" type="text" placeholder="nickname eg Addy"
+                <input id="nickname-input" name="nickname-input" type="text" placeholder="nickname eg theDean"
                        class="form-control input-md" title="nickname is public, and Unique">
+            </div>
+
+            <!-- Text input-->
+            <label class="col-md-4 control-label" for="trips-input">Trips</label>
+            <div class="col-md-4">
+                <input id="trips-input" name="trips-input[]" type="text" placeholder='["a","b","c"]'
+                       class="form-control input-md" title='ids of trips for the account in format ["a","b","c"]'>
             </div>
         </div>
 
         <!-- Submit-->
         <div class="form-group col-md-4">
             <input id="submit-account" type="submit" value="Submit">
+            <input id="get-account" type="submit" value="Get">
+            <input id="clear-account" type="submit" value="Clear">
         </div>
 
     </fieldset>
 </form>
-<div>Location</div>
-<div>Trip</div>
+<h1>Location</h1>
+<h1>Trip</h1>
 
 
 <!-- FOOTER -->

@@ -1,7 +1,11 @@
 
 window.addEventListener("load", function () {
 
-    //Account
+//debug
+//document.getElementById("account-nickname-input").value = "theDean";
+document.getElementById("account-name-input").value = "Dean";
+
+//------------------------------------------------------Account------------------------------------------------------
     $('#submit-account').click(function(event) {
         event.preventDefault();
 
@@ -26,7 +30,9 @@ window.addEventListener("load", function () {
             document.getElementById("account-trips-input").value = "";
     });
 
-    //Location
+    //TODO add in delete for account
+
+//------------------------------------------------------Location------------------------------------------------------
     $('#submit-location').click(function(event) {
         event.preventDefault();
 
@@ -52,6 +58,8 @@ window.addEventListener("load", function () {
     });
  });
 
+//------------------------------------------------------Functions------------------------------------------------------
+
 async function processRequestForAccount(){
     let result;
     let form_account = getAccountForm();//get account fields from form
@@ -62,16 +70,18 @@ async function processRequestForAccount(){
         //determine type of get to perform, and wait for server response
         if(form_account.id != null && form_account.id != "") {
             result = await get_json('/account/' + form_account.id);
+            let account = getAccountObjectFromResult(result);
+            populateAccountForm(account);
         } else if(form_account.nickname != "" && form_account.nickname != null) {
             result = await get_json('/account/nickname/' + form_account.nickname);
+            let account = getAccountObjectFromResult(result);
+            populateAccountForm(account);
         } else if(form_account.name != "" && form_account.name != null) {
              result = await get_json('/account/name/' + form_account.name);//encodeURIComponent(name)
+             populateAccountBlock(result);
         } else {
             alert("No identifiable information provided\nPlease enter an Id, Nickname, or Name");
         }
-
-        let account = getAccountObjectFromResult(result);
-        populateAccountForm(account);
      }
  }
 
@@ -90,7 +100,7 @@ function populateAccountForm(account) {
     document.getElementById("account-id-input").value = account.id;
     document.getElementById("account-name-input").value = account.name;
     document.getElementById("account-nickname-input").value = account.nickname;
-    document.getElementById("account-trips-input").value = account.trips;
+    document.getElementById("account-trips-input").value = convertToArrayString(account.trips);
 }
 
 function getAccountForm() {
@@ -114,7 +124,81 @@ function getAccountForm() {
    return account;
 }
 
-//Location
+function populateAccountBlock(accountArray) {
+
+    //populate the form with the first in the array
+    let firstAccount = getAccountObjectFromResult(accountArray[0]);
+    populateAccountForm(firstAccount);
+
+    let accountBlock = document.getElementById("account-block");
+    accountBlock.innerHTML = "";//clear
+
+    accountArray.forEach(function(element) {
+        let account = getAccountObjectFromResult(element);
+        addNewAccountToBlock(account);
+    });
+}
+
+function addNewAccountToBlock(account) {
+
+    let accountBlock = document.getElementById("account-block");
+    let AccountBlockCnt = accountBlock.childElementCount;
+
+    let accountCard = $(
+        '<div class="m-2 p-2 border border-dark" id="account-card' + AccountBlockCnt + '">' +
+            '<div id="account-id-input' + AccountBlockCnt + '">' + account.id + '</div>' +
+            '<div id="account-name-input' + AccountBlockCnt + '">' + account.name + '</div>' +
+            '<div id="account-nickname-input' + AccountBlockCnt + '">' + account.nickname + '</div>' +
+            '<div id="account-trips-input' + AccountBlockCnt + '">' + account.trips.length + '</div>' +
+            '<button class="btn-secondary" id="edit_account-button' + AccountBlockCnt + '" onclick="editAccount(event)">Edit Account &raquo;</button>' +
+        '</div>');
+    accountBlock.append(accountCard[0]);
+
+    //alternative
+
+//    let numberOfTrips =  account.trips.length;//at this point is in array format
+
+//    let accountBlock = document.getElementById("account-block");
+
+//    let card = document.createElement("div")
+//    let id = document.createElement("div");
+//    let name = document.createElement("div");
+//    let nickname = document.createElement("div");
+//    let trips = document.createElement("p");
+//
+//    card.className = "col-lg-4 card";
+//
+//    id.innerHTML = account.id;
+//    name.innerHTML = account.name;
+//    nickname.innerHTML = account.nickname;
+//    trips.innerHTML = account.trips.length;
+//
+//    card.appendChild(id);
+//    card.appendChild(name);
+//    card.appendChild(nickname);
+//    card.appendChild(trips);
+//    accountBlock.appendChild(card);
+
+//.addEventListener("click", editAccount, false);
+}
+
+async function editAccount (event) {
+     let accountCard = event.currentTarget;
+     let cardID = accountCard.id;
+     cardID = cardID.substr(cardID.length - 1);
+     let account = Object.create(Account);
+
+
+     let selectedId = '#account-id-input' + cardID;
+     let selectedAccountID =  $(selectedId).text();
+
+     let result = await get_json('/account/' + selectedAccountID);
+     account = getAccountObjectFromResult(result);
+     populateAccountForm(account);
+
+}
+
+//------------------------------------------------------Location------------------------------------------------------
 function getLocationForm() {
     let location = Object.create(Location);
     location.id = $('#location-id-input').val();
@@ -170,4 +254,13 @@ function populateLocationForm(location) {
     document.getElementById("location-name-input").value = location.name;
     document.getElementById("location-longitude-input").value = location.longitude;
     document.getElementById("location-latitude-input").value = location.latitude;
+}
+
+//Util
+function convertToArrayString(string) {
+    //not working :/
+//    let stringWithQuotes = string.replace(',', '","');
+//    return "[\"" + stringWithQuotes + "\"]"
+    //But
+       return JSON.stringify(string, "", 0)
 }

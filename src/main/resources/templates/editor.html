@@ -67,30 +67,31 @@
                     <legend>Account</legend>
 
                     <div class="form-group">
-                        <label class="col-md-4 control-label" for="account_id">Account_id</label>
+                        <label class="col-md-4 control-label" for="account-id-input">Id</label>
                         <div class="col-md-4">
-                            <input id="account_id" name="account_id" type="text" placeholder="primary key"
+                            <input id="account-id-input" name="account-id-input" type="text" placeholder="primary key"
                                    class="form-control input-md"
                                    title="id of account to update eg: 507f1f77bcf86cd799439000">
                         </div>
 
-                        <label class="col-md-4 control-label" for="name-input">First Name</label>
+                        <label class="col-md-4 control-label" for="account-name-input">First Name</label>
                         <div class="col-md-4">
-                            <input id="name-input" name="name-input" type="text"
+                            <input id="account-name-input" name="account-name-input" type="text"
                                    placeholder="What is the Name for the Account"
                                    class="form-control input-md" title="Please enter your Actual Name, protected">
                         </div>
 
-                        <label class="col-md-4 control-label" for="nickname-input">Nickname</label>
+                        <label class="col-md-4 control-label" for="account-nickname-input">Nickname</label>
                         <div class="col-md-4">
-                            <input id="nickname-input" name="nickname-input" type="text"
+                            <input id="account-nickname-input" name="account-nickname-input" type="text"
                                    placeholder="nickname eg theDean"
                                    class="form-control input-md" title="nickname is public, and Unique">
                         </div>
 
-                        <label class="col-md-4 control-label" for="trips-input">Trips</label>
+                        <label class="col-md-4 control-label" for="account-trips-input">Trips</label>
                         <div class="col-md-4">
-                            <input id="trips-input" name="trips-input[]" type="text" placeholder='["a","b","c"]'
+                            <input id="account-trips-input" name="account-trips-input[]" type="text"
+                                   placeholder='["a","b","c"]'
                                    class="form-control input-md"
                                    title='ids of trips for the account in format ["a","b","c"]'>
                         </div>
@@ -112,6 +113,56 @@
 
         <div id="collapseTwo" class="collapse hidden">
             <h1>Location form under construction</h1>
+            <form class="form-horizontal">
+                <fieldset>
+
+                    <legend>Location</legend>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="location-id-input">Id</label>
+                        <div class="col-md-4">
+                            <input id="location-id-input" name="location-id-input" type="text"
+                                   placeholder="Primary Key"
+                                   class="form-control input-md" title="nickname is public, and Unique">
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="location-name-input">Location Name</label>
+                        <div class="col-md-4">
+                            <input id="location-name-input" name="location-name-input" type="text"
+                                   placeholder="name of the location" class="form-control input-md">
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="location-longitude-input">Longitude</label>
+                        <div class="col-md-4">
+                            <input id="location-longitude-input" name="location-longitude-input" type="text"
+                                   placeholder="longitude coordinates double" class="form-control input-md">
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="location-latitude-input">Latitude</label>
+                        <div class="col-md-4">
+                            <input id="location-latitude-input" name="location-latitude-input" type="text"
+                                   placeholder="latitude coordinates double" class="form-control input-md">
+
+                        </div>
+                    </div>
+                    <!-- Submit-->
+                    <div class="form-group col-md-4">
+                        <input id="submit-location" type="submit" value="Submit">
+                        <input id="get-location" type="submit" value="Get">
+                        <input id="clear-location" type="submit" value="Clear">
+                    </div>
+
+                </fieldset>
+            </form>
         </div>
     </div>
     <div class="card">

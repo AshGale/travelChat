@@ -12,6 +12,13 @@ const Account = {
     id : null
 };
 
+const Location = {
+    name : ``,
+    longitude : 0.0,
+    latitude : 0.0,
+    id : null
+};
+
 function post_json(url = ``, data = ``) {
     // Default options are marked with *
     return fetch(url, {

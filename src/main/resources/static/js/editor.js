@@ -1,6 +1,7 @@
 
 window.addEventListener("load", function () {
 
+    //Account
     $('#submit-account').click(function(event) {
         event.preventDefault();
 
@@ -14,21 +15,47 @@ window.addEventListener("load", function () {
 
     $('#get-account').click(function(event) {
             event.preventDefault();
-            processRequesFortAccount().finally();//process reactive style
+            processRequestForAccount().finally();//process reactive style
     });
 
     $('#clear-account').click(function(event) {
             event.preventDefault();
-            document.getElementById("account_id").value = "";
-            document.getElementById("name-input").value = "";
-            document.getElementById("nickname-input").value = "";
-            document.getElementById("trips-input").value = "";
+            document.getElementById("account-id-input").value = "";
+            document.getElementById("account-name-input").value = "";
+            document.getElementById("account-nickname-input").value = "";
+            document.getElementById("account-trips-input").value = "";
+    });
+
+    //Location
+    $('#submit-location').click(function(event) {
+        event.preventDefault();
+
+        let location = getLocationForm();
+        if(location == null) {
+            console.log("Request not send due to error");
+        } else {
+            post_json('/location', location);
+        }
+    });
+
+    $('#get-location').click(function(event) {
+            event.preventDefault();
+            processRequestForLocation().finally();//process reactive style
+    });
+
+    $('#clear-location').click(function(event) {
+            event.preventDefault();
+            document.getElementById("location-id-input").value = "";
+            document.getElementById("location-name-input").value = "";
+            document.getElementById("location-longitude-input").value = "";
+            document.getElementById("location-latitude-input").value = "";
     });
  });
 
-async function processRequesFortAccount(){
+async function processRequestForAccount(){
     let result;
     let form_account = getAccountForm();//get account fields from form
+    
     if(form_account == null) {
         console.log("Request not send due to error");
     } else {
@@ -43,27 +70,12 @@ async function processRequesFortAccount(){
             alert("No identifiable information provided\nPlease enter an Id, Nickname, or Name");
         }
 
-        //process the result.
-        //if error ignore
-        //if object of single account, fill form
-        //if array, show number of accounts, and store result, and add number selection
-
-        if(result.constructor === Account){
-            console.log("of type account");
-        }
-        else if(result.constructor === Array) {
-            console.log("of type Array " + result.length);
-        }
-        else if(result.constructor === Object) {
-            console.log("of type Object");
-        } else {console.log("of type " + result.constructor );}
-
         let account = getAccountObjectFromResult(result);
-
         populateAccountForm(account);
      }
  }
 
+//create empty nodes for blank entries
 function getAccountObjectFromResult(result) {
     let account = Object.create(Account);
 
@@ -75,31 +87,87 @@ function getAccountObjectFromResult(result) {
 }
 
 function populateAccountForm(account) {
-    document.getElementById("account_id").value = account.id;
-    document.getElementById("name-input").value = account.name;
-    document.getElementById("nickname-input").value = account.nickname;
-    document.getElementById("trips-input").value = account.trips;
+    document.getElementById("account-id-input").value = account.id;
+    document.getElementById("account-name-input").value = account.name;
+    document.getElementById("account-nickname-input").value = account.nickname;
+    document.getElementById("account-trips-input").value = account.trips;
 }
 
- function getAccountForm() {
-    let account = Object.create(Account);
-    account.id = $('#account_id').val();
-    if(account.id == "") { // ensure null is sent when nothing is filled
-        account.id = null;
+function getAccountForm() {
+   let account = Object.create(Account);
+   account.id = $('#account-id-input').val();
+   if(account.id == "") { // ensure null is sent when nothing is filled
+       account.id = null;
+   }
+   account.name = $('#account-name-input').val();
+   account.nickname = $('#account-nickname-input').val();
+   if($('#account-trips-input').val() == "" || $('#account-trips-input').val() == null) { // ensure null is sent when nothing is filled
+       account.trips = null;
+   } else {
+       try {
+           account.trips = JSON.parse($('#account-trips-input').val());//["5d5827bb9660491f480fad3d"]
+       } catch {
+           window.alert("Please ensure trips are in format [\"value\",\"value\"]");
+           return null;
+       }
+   }
+   return account;
+}
+
+//Location
+function getLocationForm() {
+    let location = Object.create(Location);
+    location.id = $('#location-id-input').val();
+    if(location.id == "") { // ensure null is sent when nothing is filled
+        location.id = null;
     }
-    account.name = $('#name-input').val();
-    account.nickname = $('#nickname-input').val();
-    if($('#trips-input').val() == "" || $('#trips-input').val() == null) { // ensure null is sent when nothing is filled
-        account.trips = null;
+    location.name = $('#location-name-input').val();
+    location.longitude = $('#location-longitude-input').val();
+    location.latitude = $('#location-latitude-input').val();
+
+    return location;
+}
+
+async function processRequestForLocation(){
+    let result;
+    let form_location = getLocationForm();//get location fields from form
+
+    if(form_location == null) {
+        console.log("Request not send due to error");
     } else {
-        try {
-            account.trips = JSON.parse($('#trips-input').val());//["5d5827bb9660491f480fad3d"]
-        } catch {
-            window.alert("Please ensure trips are in format [\"value\",\"value\"]");
-            return null;
+        //determine type of get to perform, and wait for server response
+        if(form_location.id != null && form_location.id != "") {
+            result = await get_json('/location/' + form_location.id);
+//        } else if(form_location.name != "" && form_location.name != null) {//Not supporting list atm
+//            result = await get_json('/location/name/' + form_location.name);//encodeURIComponent(name)
+        }else if(form_location.name != "" && form_location.name != null) {
+            result = await get_json('/location/name/' + form_location.name + "/first");//encodeURIComponent(name)
+        } else if(form_location.nickname != "" && form_location.nickname != null) {
+            result = await get_json('/location/longitude/' + form_location.longitude
+            + '/latitude/' + form_location.latitude);
+        } else {
+            alert("No identifiable information provided\nPlease enter an Id, Name or Longitude and Latitude");
         }
-    }
 
-
-    return account;
+        let location = getLocationObjectFromResult(result);
+        populateLocationForm(location);
+     }
  }
+
+//create empty nodes for blank entries
+function getLocationObjectFromResult(result) {
+    let location = Object.create(Location);
+
+    location.id = (result || {}).id;
+    location.name = (result || {}).name;
+    location.longitude = (result || {}).longitude;
+    location.latitude = (result || {}).latitude;
+    return location;
+}
+
+function populateLocationForm(location) {
+    document.getElementById("location-id-input").value = location.id;
+    document.getElementById("location-name-input").value = location.name;
+    document.getElementById("location-longitude-input").value = location.longitude;
+    document.getElementById("location-latitude-input").value = location.latitude;
+}

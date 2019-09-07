@@ -62,7 +62,7 @@ document.getElementById("account-name-input").value = "Dean";
  });
 
 //------------------------------------------------------Functions------------------------------------------------------
-
+//TODO update for all request and move to reuse.js
 async function sendThenDisplayResult(url = '/', method = 'GET', data = '', json = 'true'){
     fetch(url,  {
                     method: method, // *GET, POST, PUT, DELETE, etc.
@@ -159,7 +159,6 @@ function getAccountForm() {
 }
 
 function populateAccountBlock(accountArray) {
-
     //populate the form with the first in the array
     let firstAccount = getAccountObjectFromResult(accountArray[0]);
     populateAccountForm(firstAccount);
@@ -174,66 +173,25 @@ function populateAccountBlock(accountArray) {
 }
 
 function addNewAccountToBlock(account) {
-
-
-
-    //html temples node
-
     let accountBlock = document.getElementById("account-block");
     let AccountBlockCnt = accountBlock.childElementCount;
 
-    let accountCard = $(
-        '<div class="m-2 p-2 border border-dark" id="account-card' + AccountBlockCnt + '">' +
-            '<div id="account-id-input' + AccountBlockCnt + '">' + account.id + '</div>' +
-            '<div id="account-name-input' + AccountBlockCnt + '">' + account.name + '</div>' +
-            '<div id="account-nickname-input' + AccountBlockCnt + '">' + account.nickname + '</div>' +
-            '<div id="account-trips-input' + AccountBlockCnt + '">' + account.trips.length + '</div>' +
-            '<button class="btn-secondary" id="edit_account-button' + AccountBlockCnt + '" onclick="editAccount(event)">Edit Account &raquo;</button>' +
-        '</div>');
-    accountBlock.append(accountCard[0]);
-
-//      alternative
-
-//    let numberOfTrips =  account.trips.length;//at this point is in array format
-
-//    let accountBlock = document.getElementById("account-block");
-
-//    let card = document.createElement("div")
-//    let id = document.createElement("div");
-//    let name = document.createElement("div");
-//    let nickname = document.createElement("div");
-//    let trips = document.createElement("p");
-//
-//    card.className = "col-lg-4 card";
-//
-//    id.innerHTML = account.id;
-//    name.innerHTML = account.name;
-//    nickname.innerHTML = account.nickname;
-//    trips.innerHTML = account.trips.length;
-//
-//    card.appendChild(id);
-//    card.appendChild(name);
-//    card.appendChild(nickname);
-//    card.appendChild(trips);
-//    accountBlock.appendChild(card);
-
-//.addEventListener("click", editAccount, false);
+    let accountTemplate = document.getElementById('account-template').content.cloneNode(true);
+    accountTemplate.querySelector('.account-id').innerText = account.id;
+    accountTemplate.querySelector('.account-name').innerText = account.name;
+    accountTemplate.querySelector('.account-nickname').innerText = account.nickname;
+    accountTemplate.querySelector('.account-trips').innerText = account.trips.length;
+    accountTemplate.id = 'account-template' + AccountBlockCnt;
+    document.getElementById("account-block").appendChild(accountTemplate);
 }
 
 async function editAccount (event) {
-     let accountCard = event.currentTarget;
-     let cardID = accountCard.id;
-     cardID = cardID.substr(cardID.length - 1);
+     let idToEdit = event.currentTarget.parentNode.querySelector('.account-id').innerText;
      let account = Object.create(Account);
 
-
-     let selectedId = '#account-id-input' + cardID;
-     let selectedAccountID =  $(selectedId).text();
-
-     let result = await get_json('/account/' + selectedAccountID);
+     let result = await get_json('/account/' + idToEdit);
      account = getAccountObjectFromResult(result);
      populateAccountForm(account);
-
 }
 
 //------------------------------------------------------Location------------------------------------------------------
@@ -296,9 +254,5 @@ function populateLocationForm(location) {
 
 //Util
 function convertToArrayString(string) {
-    //not working :/
-//    let stringWithQuotes = string.replace(',', '","');
-//    return "[\"" + stringWithQuotes + "\"]"
-    //But
        return JSON.stringify(string, "", 0)
 }

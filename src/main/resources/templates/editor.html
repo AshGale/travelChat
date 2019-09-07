@@ -19,6 +19,15 @@
 </style>
 <meta content="width=device-width, initial-scale=1" name="viewport">
 <body>
+<template id="account-template">
+    <div class="m-2 p-2 border border-dark">
+        <div class="account-id"></div>
+        <div class="account-name"></div>
+        <div class="account-nickname"></div>
+        <div class="account-trips"></div>
+        <button class="btn-secondary" onclick="editAccount(event)">Edit Account &raquo;</button>
+    </div>
+</template>
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="/home">TravelChat Navigation</a>
@@ -122,9 +131,7 @@
                     </div>
                 </fieldset>
             </form>
-            <div class="row p-2" id="account-block">
-
-            </div>
+            <div class="row p-2" id="account-block"></div>
         </div>
     </div>
     <div class="card">

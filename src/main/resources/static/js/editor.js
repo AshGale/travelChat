@@ -13,7 +13,7 @@ document.getElementById("account-name-input").value = "Dean";
         if(account == null) {
             console.log("Request not send due to error");
         } else {
-            post_json('/account', account);
+            sendThenDisplayResult('/account', "POST", account).finally();
         }
     });
 
@@ -28,6 +28,9 @@ document.getElementById("account-name-input").value = "Dean";
             document.getElementById("account-name-input").value = "";
             document.getElementById("account-nickname-input").value = "";
             document.getElementById("account-trips-input").value = "";
+            let alert = document.getElementById("alertStatus");
+            alert.className = '';
+            alert.innerHTML = null;
     });
 
     //TODO add in delete for account
@@ -60,6 +63,37 @@ document.getElementById("account-name-input").value = "Dean";
 
 //------------------------------------------------------Functions------------------------------------------------------
 
+async function sendThenDisplayResult(url = '/', method = 'GET', data = '', json = 'true'){
+    fetch(url,  {
+                    method: method, // *GET, POST, PUT, DELETE, etc.
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                }
+    ).then(response => {
+//        console.log(response.status + ` ` + response.url);
+        status = response.status;
+        body = json = 'true' ? response.json() : response;
+        displayResult(status, body);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        let alert = document.getElementById("alertStatus");
+        alert.className = 'alert';
+        alert.classList.add("alert-danger");
+        alert.innerHTML = '<strong>Submitted ok</strong> ' + error;
+    });
+}
+
+function displayResult(status ='0', body =''){
+    let alert = document.getElementById("alertStatus");
+    alert.className = 'alert';
+    alert.classList.add("alert-success");
+    alert.innerHTML = '<strong>'+status+'</strong> Submitted ok';
+}
+
+//------------------------------------------------------Account------------------------------------------------------
 async function processRequestForAccount(){
     let result;
     let form_account = getAccountForm();//get account fields from form
@@ -141,6 +175,10 @@ function populateAccountBlock(accountArray) {
 
 function addNewAccountToBlock(account) {
 
+
+
+    //html temples node
+
     let accountBlock = document.getElementById("account-block");
     let AccountBlockCnt = accountBlock.childElementCount;
 
@@ -154,7 +192,7 @@ function addNewAccountToBlock(account) {
         '</div>');
     accountBlock.append(accountCard[0]);
 
-    //alternative
+//      alternative
 
 //    let numberOfTrips =  account.trips.length;//at this point is in array format
 

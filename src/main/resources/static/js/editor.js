@@ -4,6 +4,7 @@ window.addEventListener("load", function () {
 //debug
 //document.getElementById("account-nickname-input").value = "theDean";
 document.getElementById("account-name-input").value = "Dean";
+document.getElementById("trip-id-input").value = "5d74d718b69c7b0cc090e56c";
 
 //------------------------------------------------------Account------------------------------------------------------
     $('#submit-account').click(function(event) {
@@ -31,6 +32,8 @@ document.getElementById("account-name-input").value = "Dean";
             let alert = document.getElementById("alertStatus");
             alert.className = '';
             alert.innerHTML = null;
+            let accountBlock = document.getElementById("account-block");
+            accountBlock.innerHTML = "";//clear
     });
 
     //TODO add in delete for account
@@ -82,7 +85,7 @@ async function sendThenDisplayResult(url = '/', method = 'GET', data = '', json 
         let alert = document.getElementById("alertStatus");
         alert.className = 'alert';
         alert.classList.add("alert-danger");
-        alert.innerHTML = '<strong>Submitted ok</strong> ' + error;
+        alert.innerHTML = '<strong>Error during submission </strong> ' + error;
     });
 }
 
@@ -90,7 +93,7 @@ function displayResult(status ='0', body =''){
     let alert = document.getElementById("alertStatus");
     alert.className = 'alert';
     alert.classList.add("alert-success");
-    alert.innerHTML = '<strong>'+status+'</strong> Submitted ok';
+    alert.innerHTML = '<strong>'+status+'</strong> Submitted Account ok';
 }
 
 //------------------------------------------------------Account------------------------------------------------------

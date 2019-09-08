@@ -32,17 +32,6 @@ public class TripController {
         return tripService.deleteAllTrips();
     }
 
-    // * endpoints with use
-    //create trip
-    //update trip for group Venture// not implemented
-    //get trip by id
-    //delete trip by id
-    //get all trips where leaving, departing and mode
-    //get all trips where leaving, arriving, departing, destination, mode =
-    //get all trips where departing and mode
-    //add location to trip
-
-    //Crud
     @PostMapping
     public Mono<Trip> createTrip(@RequestBody Trip trip) {
         //todo add in check to see if trip exists already, if so return that trip

@@ -72,10 +72,10 @@
         <button class="btn-link" data-toggle="collapse" data-target="#collapseOne">
             Toggle Account Section
         </button>
-
-        <div id="collapseOne" class="collapse hidden container">
+        <!--find a way to get the same margin for the other containers-->
+        <div id="collapseOne" class="container collapse hidden">
             <form id="form-account">
-                <fieldset><!--To day a box around the form-->
+                <fieldset><!--To draw a box around the form-->
                     <legend>Account</legend>
 
                     <div class="form-group row">
@@ -139,7 +139,7 @@
             Toggle Location Section
         </button>
 
-        <div id="collapseTwo" class="collapse hidden">
+        <div id="collapseTwo" class="container collapse hidden">
             <h1>Location form under construction</h1>
             <form class="form-horizontal">
                 <fieldset>
@@ -201,8 +201,103 @@
             Toggle Trip Section
         </button>
 
-        <div id="collapseThree" class="collapse hidden">
-            <h1>Trip form under construction</h1>
+        <div id="collapseThree" class="container collapse hidden">
+            <form id="form-trip">
+                <fieldset><!--To draw a box around the form-->
+                    <legend>Trips</legend>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold"
+                               for="trip-id-input">Id</label>
+                        <div class="col-sm-9">
+                            <input id="trip-id-input" name="trip-id-input" type="text"
+                                   class="form-control" placeholder="primary key"
+                                   title="Id of the trip to update eg: 507f1f77bcf86cd799439000">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold"
+                               for="trip-leaving-input">Leaving</label>
+                        <div class="col-sm-9">
+                            <input id="trip-leaving-input" name="trip-leaving-input" type="text"
+                                   class="form-control" placeholder="Leaving at date time"
+                                   title='The time the trip starts eg "2019-01-01T23:00:00"'>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold"
+                               for="trip-arriving-input">Arriving</label>
+                        <div class="col-sm-9">
+                            <input id="trip-arriving-input" name="trip-arriving-input" type="text"
+                                   class="form-control" placeholder="Arriving at date time"
+                                   title='The time the trip ends eg "2019-01-01T23:00:00"'>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold"
+                               for="trip-departing-input">Departing</label>
+                        <div class="col-sm-9">
+                            <input id="trip-departing-input" name="trip-departing-input" type="text"
+                                   class="form-control" placeholder="Departing Name"
+                                   title="Name of the departing location">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold"
+                               for="trip-destination-input">Destination</label>
+                        <div class="col-sm-9">
+                            <input id="trip-destination-input" name="trip-destination-input" type="text"
+                                   class="form-control" placeholder="Destination name"
+                                   title="Name of the ending destination location">
+                        </div>
+                    </div>
+                    <!--                    dropdown-->
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold"
+                               for="trip-mode-input">Mode</label>
+                        <div class="col-sm-9">
+                            <input id="trip-mode-input" name="trip-mode-input" type="text"
+                                   class="form-control" placeholder="ModeOfTransport "
+                                   title='ModeOfTransport eg Train, Walk ect'>
+                        </div>
+                    </div>
+                    <!--                    checkbox-->
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold"
+                               for="trip-discoverable-input">Discoverable</label>
+                        <div class="col-sm-9">
+                            <input id="trip-discoverable-input" name="trip-discoverable-input" type="text"
+                                   class="form-control" placeholder="true or false"
+                                   title='Is your trip able to be found for matching, or is it private?'>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold"
+                               for="trip-attending-input">Attending</label>
+                        <div class="col-sm-9">
+                            <input id="trip-attending-input" name="trip-attending-input[]" type="text"
+                                   placeholder='["a","b","c"]'
+                                   class="form-control input-md"
+                                   title='The ids of attending accounts in the format ["a","b","c"]'>
+                        </div>
+                    </div>
+                    <!-- Submit-->
+                    <div class="form-group row">
+                        <div class="col-sm-4">
+                            <input id="submit-trip" class="btn-primary form-control input-md" type="submit"
+                                   value="Submit">
+                        </div>
+                        <div class="col-sm-4">
+                            <input id="get-trip" class="btn-secondary form-control input-md" type="submit"
+                                   value="Get">
+                        </div>
+                        <div class="col-sm-4">
+                            <input id="clear-trip" class="btn form-control input-md" type="submit" value="Clear">
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+            <div class="row p-2" id="trip-block"></div>
         </div>
     </div>
 </div>

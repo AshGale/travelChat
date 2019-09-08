@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
-@Document(collection="tripTable")
+@Document(collection = "tripTable")
 @Data
 @Getter
 @Setter
@@ -20,12 +20,12 @@ import java.util.List;
 public class Trip {
 
     //todo add in journey as parent that contains multiple trips
-        //todo add in layover for gaps in journey timeline
+    //todo add in layover for gaps in journey timeline
     //todo add in company, sometimes applicable, but we'll see
 
     @Id
     private String id;
-    private LocalDateTime leaving;//leaving time for trip
+    private LocalDateTime leaving;//leaving time for trip//2019-01-01T00:00:00.000+00:00//"2019-01-01T23:00:00"
     private LocalDateTime arriving;//arriving at time
     private Location departing;//departing location
     private Location destination;//destination trip end

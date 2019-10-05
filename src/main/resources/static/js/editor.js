@@ -12,9 +12,9 @@ document.getElementById("trip-id-input").value = "5d8784fee246f610b84fdfce";
 
         let account = getAccountForm();
         if(account == null) {
-            console.log("Request not send due to error");
+            displayResult("0", "Request not send due to error");
         } else {
-            submitAccountDisplay('/account', "POST", account);
+            submitAccount(account);
         }
     });
 
@@ -71,7 +71,7 @@ document.getElementById("trip-id-input").value = "5d8784fee246f610b84fdfce";
             console.log("Request not send due to error");
         }else {
             let trip = Object.create(Trip);
-            trip = submitAccount('/trip', "POST", trip);
+            trip = submitTrip('/trip', "POST", trip);
             populateTripForm(trip);
         }
     });
@@ -102,92 +102,15 @@ document.getElementById("trip-id-input").value = "5d8784fee246f610b84fdfce";
 
 //------------------------------------------------------Functions------------------------------------------------------
 
-async function submitAccountDisplay(url = '/', method = 'GET', data = '', json = 'true') {
+//------------------------------------------------------Account------------------------------------------------------
+
+async function submitAccount(data = '') {
     let account = Object.create(Account);
 
-    account = await sendRequest(url, 'POST', data);
-    console.log(JSON.stringify(account));
+    account = await sendRequest('/account', 'POST', data);
     populateAccountForm(account);
 }
 
-async function sendRequest(url = '/', method = 'GET', data = '', json = 'true') {
-  // Reuse Function for request to get back the json by default
-  return await fetch(url, {
-        method: method,
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-    }).then( async (payload) => {
-//        console.log(response.status + ` ` + response.url);
-        status = payload.status;
-//        body = json = 'true' ? response.json() : response;
-        body = await payload.json();//request comes before the data, hence second await
-        displayResult(status, body);
-        return body;
-    }).catch(error => {
-        console.error('Error:', error);
-        let alert = document.getElementById("alertStatus");
-        alert.className = 'alert';
-        alert.classList.add("alert-danger");
-        alert.innerHTML = '<strong>Error during submission </strong> ' + error;
-    });
-//  return json == 'true' ? response.json() : response;
-//  return await response.json();
-
-}
-
-//TODO update for all request and move to reuse.js
-async function sendThenDisplayResult(url = '/', method = 'GET', data = '', json = 'true'){
-
-
-
-    return await fetch(url,  {
-                    method: method, // *GET, POST, PUT, DELETE, etc.
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(data),
-                }
-    );
-    console.log("in send function");
-    return await response.then( payload => {
-                  //        console.log(response.status + ` ` + response.url);
-                          status = payload.status;
-                  //        body = json = 'true' ? response.json() : response;
-                          body =  payload.json();
-                          displayResult(status, body);
-                      })
-                      .catch(error => {
-                          console.error('Error:', error);
-                          let alert = document.getElementById("alertStatus");
-                          alert.className = 'alert';
-                          alert.classList.add("alert-danger");
-                          alert.innerHTML = '<strong>Error during submission </strong> ' + error;
-                      });
-}
-
-function displayResult(status ='0', body =''){
-    let alert = document.getElementById("alertStatus");
-    alert.className = 'alert';
-    alert.classList.add("alert-success");
-    alert.innerHTML = '<strong>'+status+'</strong>: ' + JSON.stringify(body, "", 0);
-}
-
-function alertUser(type = 'alert-danger', message = '<strong>Something wend wrong</strong> check with input data') {
-    let alert = document.getElementById("alertStatus");
-    alert.className = 'alert';
-    alert.classList.add(type);
-    alert.innerHTML = message;
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-}
-
-function convertToArrayString(string) {
-       return JSON.stringify(string, "", 0)
-}
-
-//------------------------------------------------------Account------------------------------------------------------
 async function processRequestForAccount(){
     let result;
     let form_account = getAccountForm();//get account fields from form
@@ -197,18 +120,20 @@ async function processRequestForAccount(){
     } else {
         //determine type of get to perform, and wait for server response
         if(form_account.id != null && form_account.id != "") {
-            result = await get_json('/account/' + form_account.id);
+            result = await sendRequest('/account/' + form_account.id, 'GET');
             let account = getAccountObjectFromResult(result);
             populateAccountForm(account);
         } else if(form_account.nickname != "" && form_account.nickname != null) {
-            result = await get_json('/account/nickname/' + form_account.nickname);
+            result = await sendRequest('/account/nickname/' + form_account.nickname, 'GET');
             let account = getAccountObjectFromResult(result);
             populateAccountForm(account);
         } else if(form_account.name != "" && form_account.name != null) {
-             result = await get_json('/account/name/' + form_account.name);//encodeURIComponent(name)
-             populateAccountBlock(result);
+            result = await sendRequest('/account/name/' + form_account.name, 'GET');//encodeURIComponent(name)
+            populateAccountBlock(result);
         } else {
-            alert("No identifiable information provided\nPlease enter an Id, Nickname, or Name");
+            alertUser("No identifiable information provided"
+                + "\nPlease enter an Id, Nickname, or Name", 'alert-dismissible');
+//            alert("No identifiable information provided\nPlease enter an Id, Nickname, or Name");
         }
     }
 }
@@ -320,7 +245,8 @@ async function processRequestForLocation(){
             result = await get_json('/location/longitude/' + form_location.longitude
             + '/latitude/' + form_location.latitude);
         } else {
-            alert("No identifiable information provided\nPlease enter an Id, Name or Longitude and Latitude");
+            alert("No identifiable information provided"
+                + "\nPlease enter an Id, Name or Longitude and Latitude");
         }
 
         let location = getLocationObjectFromResult(result);
@@ -400,8 +326,7 @@ async function processRequestForTrip(){//convert to trip for get
     let formTrip = await getTripForm();//get account fields from form
 
     if(formTrip == null) {
-        alertUser("alert-danger", "Request not send due to error")
-        console.log("Request not send due to error");
+        alertUser("Request not send due to error")
     } else {
         //determine type of get to perform, and wait for server response
         if(formTrip.id != null && formTrip.id != "") {
@@ -418,7 +343,8 @@ async function processRequestForTrip(){//convert to trip for get
             let trip = getTripObjectFromResult(result);
             populateTripForm(trip);
         }  else {
-            alertUser('alert-dismissible', "No identifiable information provided\nPlease enter an Id, leaving, arriving, departing, destination");
+            alertUser("No identifiable information provided"
+            + "\nPlease enter an Id, leaving, arriving, departing, destination", 'alert-dismissible');
         }
     }
 }
@@ -452,3 +378,46 @@ function populateTripForm (trip) {
 
 }
 //------------------------------------------------------Util------------------------------------------------------
+
+async function sendRequest(url = '/', method = 'GET', data = '', json = 'true') {
+  // Reuse Function for request to get back the json by default
+  return await fetch(url, {
+        method: method,
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: method == 'GET' ? null : JSON.stringify(data),
+    }).then( async (payload) => {
+        status = payload.status;
+//        body = json == 'true' ? response.json() : response;
+        body = await payload.json();//request comes before the data, hence second await
+        displayResult(status, body);
+        return body;
+    }).catch(error => {
+        console.error('Error:', error);
+        let alert = document.getElementById("alertStatus");
+        alert.className = 'alert';
+        alert.classList.add("alert-danger");
+        alert.innerHTML = '<strong>Error during submission </strong> ' + error;
+    });
+}
+
+function displayResult(status ='0', body =''){
+    let alert = document.getElementById("alertStatus");
+    alert.className = 'alert';
+    alert.classList.add("alert-success");
+    alert.innerHTML = '<strong>'+status+'</strong>: ' + JSON.stringify(body, "", 0);
+}
+
+function alertUser(message = '<strong>Something wend wrong</strong> check with input data', type = 'alert-danger') {
+    let alert = document.getElementById("alertStatus");
+    alert.className = 'alert';
+    alert.classList.add(type);
+    alert.innerHTML = message;
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+}
+
+function convertToArrayString(string) {
+       return JSON.stringify(string, "", 0)
+}

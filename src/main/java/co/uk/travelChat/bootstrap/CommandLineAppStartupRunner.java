@@ -39,7 +39,7 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     }
 
     @Override
-    public void run(String...args) throws Exception {
+    public void run(String... args) throws Exception {
 
         //Set up example time
         String time = "2019-01-01 00:00";
@@ -80,17 +80,17 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
 
         tripMap = new LinkedHashMap<>();
         //london victoria too London Bridge Station
-        tripMap.put(1, new Trip(null, localDateTime.plusHours(0), localDateTime.plusHours(1), locationMap.get(1), locationMap.get(2), ModeOfTransport.Train, true, new ArrayList<>()));
+        tripMap.put(1, new Trip("5d8784fee246f610b84fdfce", localDateTime.plusHours(0), localDateTime.plusHours(1), locationMap.get(1), locationMap.get(2), ModeOfTransport.Train, true, new ArrayList<>()));
         //london Victoria too Brighton Railway Station
-        tripMap.put(2, new Trip(null, localDateTime.plusHours(0), localDateTime.plusHours(1), locationMap.get(1), locationMap.get(3), ModeOfTransport.Train, true, new ArrayList<>()));
+        tripMap.put(2, new Trip("5d8784fee246f610b84fdfcf", localDateTime.plusHours(0), localDateTime.plusHours(1), locationMap.get(1), locationMap.get(3), ModeOfTransport.Train, true, new ArrayList<>()));
         //London Bridge to Brighton Railway Station
-        tripMap.put(3, new Trip(null, localDateTime.plusHours(0), localDateTime.plusHours(1), locationMap.get(2), locationMap.get(3), ModeOfTransport.Train, true, new ArrayList<>()));
+        tripMap.put(3, new Trip("5d8784fee246f610b84fdfd0", localDateTime.plusHours(0), localDateTime.plusHours(1), locationMap.get(2), locationMap.get(3), ModeOfTransport.Train, true, new ArrayList<>()));
         //dover to Brighton
-        tripMap.put(4, new Trip(null, localDateTime.plusHours(1), localDateTime.plusHours(2), locationMap.get(4), locationMap.get(3), ModeOfTransport.Train, true, new ArrayList<>()));
+        tripMap.put(4, new Trip("5d8784fee246f610b84fdfd1", localDateTime.plusHours(1), localDateTime.plusHours(2), locationMap.get(4), locationMap.get(3), ModeOfTransport.Train, true, new ArrayList<>()));
         //london victoria too London Bridge Station + 2hr
-        tripMap.put(5, new Trip(null, localDateTime.plusHours(2), localDateTime.plusHours(3), locationMap.get(1), locationMap.get(2), ModeOfTransport.Train, true, new ArrayList<>()));
+        tripMap.put(5, new Trip("5d8784fee246f610b84fdfd2", localDateTime.plusHours(2), localDateTime.plusHours(3), locationMap.get(1), locationMap.get(2), ModeOfTransport.Train, true, new ArrayList<>()));
         //London Bridge Station too london victoria
-        tripMap.put(6, new Trip(null, localDateTime.plusHours(1), localDateTime.plusHours(2), locationMap.get(2), locationMap.get(1), ModeOfTransport.Train, true, new ArrayList<>()));
+        tripMap.put(6, new Trip("5d8784fee246f610b84fdfd3", localDateTime.plusHours(1), localDateTime.plusHours(2), locationMap.get(2), locationMap.get(1), ModeOfTransport.Train, true, new ArrayList<>()));
 
         tripMap.forEach((key, trip) -> tripCrudRepository.save(trip)
                 .subscribe(savedTrip -> logger.info(savedTrip.toString())));
@@ -139,6 +139,6 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
                 .subscribe(savedTrip -> logger.info(savedTrip.toString())));
 
 //        accountCrudRepository.findAll().doOnNext(account -> logger.info(account.toString())).subscribe();
-}
+    }
 
 }

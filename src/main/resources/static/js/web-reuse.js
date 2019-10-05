@@ -6,17 +6,38 @@ const host = `http://localhost:8080/`;//can update this when deployed
 const close_button_margin = '40px';
 
 const Account = {
-    name : ``,
-    nickname : ``,
-    trips : [],
-    id : null
+    id : null,
+    name : '',
+    nickname : '',
+    trips : []
 };
 
 const Location = {
-    name : ``,
+    id : null,
+    name : '',
     longitude : 0.0,
-    latitude : 0.0,
-    id : null
+    latitude : 0.0
+};
+
+const Trip = {
+    id : null,
+    leaving : '2019-01-01T00:00:00',
+    arriving : '2019-01-01T00:00:00',
+    departing :
+    {
+        id : null, name : '',
+        longitude : 0.0,
+        latitude : 0.0
+    },
+    destination :
+    {
+        id : null, name : '',
+        longitude : 0.0,
+        latitude : 0.0
+    },
+    mode : 'Walk',
+    discoverable : 'true',
+    attending : []
 };
 
 function post_json(url = ``, data = ``) {

@@ -4,7 +4,7 @@ window.addEventListener("load", function () {
 //debug
 //document.getElementById("account-nickname-input").value = "theDean";
 document.getElementById("account-name-input").value = "Dean";
-document.getElementById("trip-id-input").value = "5d74d718b69c7b0cc090e56c";
+document.getElementById("trip-id-input").value = "5d8784fee246f610b84fdfce";
 
 //------------------------------------------------------Account------------------------------------------------------
     $('#submit-account').click(function(event) {
@@ -14,13 +14,13 @@ document.getElementById("trip-id-input").value = "5d74d718b69c7b0cc090e56c";
         if(account == null) {
             console.log("Request not send due to error");
         } else {
-            sendThenDisplayResult('/account', "POST", account).finally();
+            submitAccountDisplay('/account', "POST", account);
         }
     });
 
     $('#get-account').click(function(event) {
             event.preventDefault();
-            processRequestForAccount().finally();//process reactive style
+            processRequestForAccount();//process reactive style
     });
 
     $('#clear-account').click(function(event) {
@@ -62,31 +62,101 @@ document.getElementById("trip-id-input").value = "5d74d718b69c7b0cc090e56c";
             document.getElementById("location-longitude-input").value = "";
             document.getElementById("location-latitude-input").value = "";
     });
- });
+//------------------------------------------------------Trip------------------------------------------------------
+    $('#submit-trip').click(function(event) {
+        event.preventDefault();
+
+        let trip = getTripForm();
+        if(trip == null) {
+            console.log("Request not send due to error");
+        }else {
+            let trip = Object.create(Trip);
+            trip = submitAccount('/trip', "POST", trip);
+            populateTripForm(trip);
+        }
+    });
+
+    $('#get-trip').click(function(event) {
+            event.preventDefault();
+            processRequestForTrip().finally();//process reactive style
+    });
+
+    $('#clear-trip').click(function(event) {
+        event.preventDefault();
+        document.getElementById("trip-id-input").value = "";
+        document.getElementById("trip-leaving-input").value = "";
+        document.getElementById("trip-arriving-input").value = "";
+        document.getElementById("trip-departing-input").value = "";
+        document.getElementById("trip-destination-input").value = "";
+        document.getElementById("trip-mode-input").value = "";
+        document.getElementById("trip-discoverable-input").value = "";
+        document.getElementById("trip-attending-input").value = "";
+
+        let alert = document.getElementById("alertStatus");
+        alert.className = '';
+        alert.innerHTML = null;
+        let tripBlock = document.getElementById("trip-block");
+        tripBlock.innerHTML = "";//clear
+    });
+ });//end load
 
 //------------------------------------------------------Functions------------------------------------------------------
+
+async function submitAccountDisplay(url = '/', method = 'GET', data = '', json = 'true') {
+    let account = Object.create(Account);
+
+    account = await postData(url, data);
+    console.log(JSON.stringify(account));
+    populateAccountForm(account);
+}
+
+async function postData(url = '', data = {}) {
+  // Default options are marked with *
+  const response = await fetch(url, {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, *cors, same-origin
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, *same-origin, omit
+        headers: {
+            'Content-Type': 'application/json',
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        redirect: 'follow', // manual, *follow, error
+        referrer: 'no-referrer', // no-referrer, *client
+        body: JSON.stringify(data), // body data type must match "Content-Type" header
+    });
+    console.log("in send function");
+  return await response.json(); // parses JSON response into native JavaScript objects
+}
+
 //TODO update for all request and move to reuse.js
 async function sendThenDisplayResult(url = '/', method = 'GET', data = '', json = 'true'){
-    fetch(url,  {
+
+
+
+    return await fetch(url,  {
                     method: method, // *GET, POST, PUT, DELETE, etc.
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify(data),
                 }
-    ).then(response => {
-//        console.log(response.status + ` ` + response.url);
-        status = response.status;
-        body = json = 'true' ? response.json() : response;
-        displayResult(status, body);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        let alert = document.getElementById("alertStatus");
-        alert.className = 'alert';
-        alert.classList.add("alert-danger");
-        alert.innerHTML = '<strong>Error during submission </strong> ' + error;
-    });
+    );
+    console.log("in send function");
+    return await response.then( payload => {
+                  //        console.log(response.status + ` ` + response.url);
+                          status = payload.status;
+                  //        body = json = 'true' ? response.json() : response;
+                          body =  payload.json();
+                          displayResult(status, body);
+                      })
+                      .catch(error => {
+                          console.error('Error:', error);
+                          let alert = document.getElementById("alertStatus");
+                          alert.className = 'alert';
+                          alert.classList.add("alert-danger");
+                          alert.innerHTML = '<strong>Error during submission </strong> ' + error;
+                      });;
 }
 
 function displayResult(status ='0', body =''){
@@ -94,6 +164,19 @@ function displayResult(status ='0', body =''){
     alert.className = 'alert';
     alert.classList.add("alert-success");
     alert.innerHTML = '<strong>'+status+'</strong> Submitted Account ok';
+}
+
+function alertUser(type = 'alert-danger', message = '<strong>Something wend wrong</strong> check with input data') {
+    let alert = document.getElementById("alertStatus");
+    alert.className = 'alert';
+    alert.classList.add(type);
+    alert.innerHTML = message;
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+}
+
+function convertToArrayString(string) {
+       return JSON.stringify(string, "", 0)
 }
 
 //------------------------------------------------------Account------------------------------------------------------
@@ -119,8 +202,8 @@ async function processRequestForAccount(){
         } else {
             alert("No identifiable information provided\nPlease enter an Id, Nickname, or Name");
         }
-     }
- }
+    }
+}
 
 //create empty nodes for blank entries
 function getAccountObjectFromResult(result) {
@@ -134,10 +217,10 @@ function getAccountObjectFromResult(result) {
 }
 
 function populateAccountForm(account) {
-    document.getElementById("account-id-input").value = account.id;
-    document.getElementById("account-name-input").value = account.name;
-    document.getElementById("account-nickname-input").value = account.nickname;
-    document.getElementById("account-trips-input").value = convertToArrayString(account.trips);
+    document.getElementById("account-id-input").value = (account || {}).id;
+    document.getElementById("account-name-input").value = (account || {}).name;
+    document.getElementById("account-nickname-input").value = (account || {}).nickname;
+    document.getElementById("account-trips-input").value = convertToArrayString((account || {}).trips);
 }
 
 function getAccountForm() {
@@ -255,7 +338,109 @@ function populateLocationForm(location) {
     document.getElementById("location-latitude-input").value = location.latitude;
 }
 
-//Util
-function convertToArrayString(string) {
-       return JSON.stringify(string, "", 0)
+//------------------------------------------------------Trip------------------------------------------------------
+async function getTripForm() {
+    let trip = Object.create(Trip);
+    trip.id = $('#trip-id-input').val();
+    if(trip.id == "") { // ensure null is sent when nothing is filled
+       trip.id = null;
+    }
+    trip.leaving = $('#trip-leaving-input').val();
+    trip.arriving = $('#trip-arriving-input').val();
+
+    //get based on name and fill in
+    if($('#trip-departing-input').val() !== "" || $('#trip-departing-input').val() !== null) {
+        let departingLocation = await get_json('/location/name/' + $('#trip-departing-input').val() + "/first");
+        trip.departing = departingLocation;
+    } else {
+        trip.departing = null;
+    }
+
+    //get based on name value
+    if($('#trip-departing-input').val() !== "" || $('#trip-departing-input').val() !== null) {
+        let destinationLocation = await get_json('/location/name/' + $('#trip-destination-input').val() + "/first");
+        trip.destination = destinationLocation;
+    }
+    else {
+        trip.destination = null;
+    }
+
+    trip.mode = $('#trip-mode-input').val();//todo make dropdown
+    trip.discoverable = $('#trip-discoverable-input').val();//todo make checkbox
+
+    if($('#trip-attending-input').val() == "" || $('#trip-attending-input').val() == null) { // ensure null is sent when nothing is filled
+       trip.attending = null;
+    } else {
+       try {
+           trip.attending = JSON.parse($('#trip-attending-input').val());//["5d5827bb9660491f480fad3d"]
+       } catch {
+           let alert = document.getElementById("alertStatus");
+           alert.className = 'alert';
+           alert.classList.add("alert-danger");
+           alert.innerHTML = '<strong>Array format</strong> Please ensure attending is in format [\"value\",\"value\"]';
+           document.body.scrollTop = 0; // For Safari
+           document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    //           window.alert("Please ensure attending are in format [\"value\",\"value\"]");
+           return null;
+       }
+    }
+    return trip;
 }
+
+async function processRequestForTrip(){//convert to trip for get
+    let result;
+    let formTrip = await getTripForm();//get account fields from form
+
+    if(formTrip == null) {
+        alertUser("alert-danger", "Request not send due to error")
+        console.log("Request not send due to error");
+    } else {
+        //determine type of get to perform, and wait for server response
+        if(formTrip.id != null && formTrip.id != "") {
+            result = await get_json('/trip/' + formTrip.id);
+            let trip = getTripObjectFromResult(result);
+            populateTripForm(trip);
+        } else if(  formTrip.departing != "" && formTrip.departing != null &&
+                    formTrip.leaving != "" && formTrip.leaving != null &&
+                    formTrip.destination != "" && formTrip.destination != null &&
+                    formTrip.arriving != "" && formTrip.arriving != null) {
+            result = await get_json('/trip'
+            + '/departing/'+ formTrip.departing + '/leaving/' + formTrip.leaving
+            + '/destination/' + formTrip.destination + '/arriving/' + formTrip.arriving);
+            let trip = getTripObjectFromResult(result);
+            populateTripForm(trip);
+        }  else {
+            alertUser('alert-dismissible', "No identifiable information provided\nPlease enter an Id, leaving, arriving, departing, destination");
+        }
+    }
+}
+
+function getTripObjectFromResult(result) {
+    let trip = Object.create(Trip);
+
+    trip.id = (result || {}).id;
+    trip.leaving = (result || {}).leaving;
+    trip.arriving = (result || {}).arriving;
+    trip.departing = (result || {}).departing;
+    trip.departing = ((result || {}).departing || {}).name;
+    trip.destination = ((result || {}).destination || {}).name;
+    trip.mode = (result || {}).mode;
+    trip.discoverable = (result || {}).discoverable;
+    trip.attending = (result || {}).attending;
+    return trip;
+}
+
+function populateTripForm (trip) {
+
+    document.getElementById("trip-id-input").value = trip.id;
+    document.getElementById("trip-leaving-input").value = trip.leaving;
+    document.getElementById("trip-arriving-input").value = trip.arriving;
+    document.getElementById("trip-departing-input").value = trip.departing;
+    document.getElementById("trip-destination-input").value = trip.destination;
+    document.getElementById("trip-mode-input").value = trip.mode;
+    document.getElementById("trip-discoverable-input").value = trip.discoverable;
+    document.getElementById("trip-attending-input").value = convertToArrayString(trip.attending);
+
+
+}
+//------------------------------------------------------Util------------------------------------------------------

@@ -25,13 +25,15 @@ const Trip = {
     arriving : '2019-01-01T00:00:00',
     departing :
     {
-        id : null, name : '',
+        id : null,
+        name : '',
         longitude : 0.0,
         latitude : 0.0
     },
     destination :
     {
-        id : null, name : '',
+        id : null,
+        name : '',
         longitude : 0.0,
         latitude : 0.0
     },

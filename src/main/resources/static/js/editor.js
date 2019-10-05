@@ -295,7 +295,7 @@ async function getTripForm() {
         let departingLocation = await get_json('/location/name/' + departing + "/first");
         trip.departing = departingLocation;
     } else {
-        trip.departing = null;
+        //trip.departing.name = {};
     }
 
     //get based on name value
@@ -305,7 +305,7 @@ async function getTripForm() {
         trip.destination = destinationLocation;
     }
     else {
-        trip.destination = null;
+        //trip.destination.name = null;
     }
 
     trip.mode = $('#trip-mode-input').val();//todo make dropdown
@@ -365,8 +365,8 @@ function getTripObjectFromResult(result) {
     trip.leaving = (result || {}).leaving;
     trip.arriving = (result || {}).arriving;
     trip.departing = (result || {}).departing;
-    trip.departing = ((result || {}).departing || {}).name;
-    trip.destination = ((result || {}).destination || {}).name;
+    trip.departing.name = ((result || {}).departing || {}).name;
+    trip.destination.name = ((result || {}).destination || {}).name;
     trip.mode = (result || {}).mode;
     trip.discoverable = (result || {}).discoverable;
     trip.attending = (result || {}).attending;
@@ -378,8 +378,8 @@ function populateTripForm (trip) {
     document.getElementById("trip-id-input").value = trip.id;
     document.getElementById("trip-leaving-input").value = trip.leaving;
     document.getElementById("trip-arriving-input").value = trip.arriving;
-    document.getElementById("trip-departing-input").value = trip.departing;
-    document.getElementById("trip-destination-input").value = trip.destination;
+    document.getElementById("trip-departing-input").value = trip.departing.name;
+    document.getElementById("trip-destination-input").value = trip.destination.name;
     document.getElementById("trip-mode-input").value = trip.mode;
     document.getElementById("trip-discoverable-input").value = trip.discoverable;
     document.getElementById("trip-attending-input").value = convertToArrayString(trip.attending);

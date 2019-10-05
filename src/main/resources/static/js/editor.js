@@ -20,7 +20,7 @@ document.getElementById("trip-id-input").value = "5d8784fee246f610b84fdfce";
 
     $('#get-account').click(function(event) {
             event.preventDefault();
-            processRequestForAccount();//process reactive style
+            processRequestForAccount();
     });
 
     $('#clear-account').click(function(event) {
@@ -63,16 +63,14 @@ document.getElementById("trip-id-input").value = "5d8784fee246f610b84fdfce";
             document.getElementById("location-latitude-input").value = "";
     });
 //------------------------------------------------------Trip------------------------------------------------------
-    $('#submit-trip').click(function(event) {
+    $('#submit-trip').click(async function(event) {
         event.preventDefault();
 
-        let trip = getTripForm();
+        let trip = await getTripForm();
         if(trip == null) {
-            console.log("Request not send due to error");
+            displayResult("", "Request not send due to error");
         }else {
-            let trip = Object.create(Trip);
-            trip = submitTrip('/trip', "POST", trip);
-            populateTripForm(trip);
+            trip = submitTrip(trip);
         }
     });
 
@@ -273,9 +271,18 @@ function populateLocationForm(location) {
 }
 
 //------------------------------------------------------Trip------------------------------------------------------
+
+async function submitTrip(data = '') {
+    let trip = Object.create(Trip);
+
+    trip = await sendRequest('/trip', 'POST', data);
+    populateTripForm(trip);
+}
+
 async function getTripForm() {
     let trip = Object.create(Trip);
     trip.id = $('#trip-id-input').val();
+
     if(trip.id == "") { // ensure null is sent when nothing is filled
        trip.id = null;
     }
@@ -283,16 +290,18 @@ async function getTripForm() {
     trip.arriving = $('#trip-arriving-input').val();
 
     //get based on name and fill in
-    if($('#trip-departing-input').val() !== "" || $('#trip-departing-input').val() !== null) {
-        let departingLocation = await get_json('/location/name/' + $('#trip-departing-input').val() + "/first");
+    let departing = $('#trip-departing-input').val();
+    if(departing != "" && departing != null) {
+        let departingLocation = await get_json('/location/name/' + departing + "/first");
         trip.departing = departingLocation;
     } else {
         trip.departing = null;
     }
 
     //get based on name value
-    if($('#trip-departing-input').val() !== "" || $('#trip-departing-input').val() !== null) {
-        let destinationLocation = await get_json('/location/name/' + $('#trip-destination-input').val() + "/first");
+    let destination = $('#trip-destination-input').val();
+    if(destination != "" && destination != null) {
+        let destinationLocation = await get_json('/location/name/' + destination + "/first");
         trip.destination = destinationLocation;
     }
     else {
@@ -318,12 +327,12 @@ async function getTripForm() {
            return null;
        }
     }
-    return trip;
+    return await trip;
 }
 
 async function processRequestForTrip(){//convert to trip for get
     let result;
-    let formTrip = await getTripForm();//get account fields from form
+    let formTrip = await getTripForm();//get trip fields from form
 
     if(formTrip == null) {
         alertUser("Request not send due to error")

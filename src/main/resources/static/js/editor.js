@@ -105,28 +105,36 @@ document.getElementById("trip-id-input").value = "5d8784fee246f610b84fdfce";
 async function submitAccountDisplay(url = '/', method = 'GET', data = '', json = 'true') {
     let account = Object.create(Account);
 
-    account = await postData(url, data);
+    account = await sendRequest(url, 'POST', data);
     console.log(JSON.stringify(account));
     populateAccountForm(account);
 }
 
-async function postData(url = '', data = {}) {
-  // Default options are marked with *
-  const response = await fetch(url, {
-        method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        mode: 'cors', // no-cors, *cors, same-origin
-        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: 'same-origin', // include, *same-origin, omit
+async function sendRequest(url = '/', method = 'GET', data = '', json = 'true') {
+  // Reuse Function for request to get back the json by default
+  return await fetch(url, {
+        method: method,
         headers: {
-            'Content-Type': 'application/json',
-            // 'Content-Type': 'application/x-www-form-urlencoded',
+            "Content-Type": "application/json",
         },
-        redirect: 'follow', // manual, *follow, error
-        referrer: 'no-referrer', // no-referrer, *client
-        body: JSON.stringify(data), // body data type must match "Content-Type" header
+        body: JSON.stringify(data),
+    }).then( async (payload) => {
+//        console.log(response.status + ` ` + response.url);
+        status = payload.status;
+//        body = json = 'true' ? response.json() : response;
+        body = await payload.json();//request comes before the data, hence second await
+        displayResult(status, body);
+        return body;
+    }).catch(error => {
+        console.error('Error:', error);
+        let alert = document.getElementById("alertStatus");
+        alert.className = 'alert';
+        alert.classList.add("alert-danger");
+        alert.innerHTML = '<strong>Error during submission </strong> ' + error;
     });
-    console.log("in send function");
-  return await response.json(); // parses JSON response into native JavaScript objects
+//  return json == 'true' ? response.json() : response;
+//  return await response.json();
+
 }
 
 //TODO update for all request and move to reuse.js
@@ -156,14 +164,14 @@ async function sendThenDisplayResult(url = '/', method = 'GET', data = '', json 
                           alert.className = 'alert';
                           alert.classList.add("alert-danger");
                           alert.innerHTML = '<strong>Error during submission </strong> ' + error;
-                      });;
+                      });
 }
 
 function displayResult(status ='0', body =''){
     let alert = document.getElementById("alertStatus");
     alert.className = 'alert';
     alert.classList.add("alert-success");
-    alert.innerHTML = '<strong>'+status+'</strong> Submitted Account ok';
+    alert.innerHTML = '<strong>'+status+'</strong>: ' + JSON.stringify(body, "", 0);
 }
 
 function alertUser(type = 'alert-danger', message = '<strong>Something wend wrong</strong> check with input data') {

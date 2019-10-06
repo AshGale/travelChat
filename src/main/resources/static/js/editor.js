@@ -190,14 +190,14 @@ function populateAccountBlock(accountArray) {
 
 function addNewAccountToBlock(account) {
   let accountBlock = document.getElementById("account-block");
-  let AccountBlockCnt = accountBlock.childElementCount;
+  let accountBlockCount = accountBlock.childElementCount;
 
   let accountTemplate = document.getElementById('account-template').content.cloneNode(true);
   accountTemplate.querySelector('.account-id').innerText = account.id;
   accountTemplate.querySelector('.account-name').innerText = account.name;
   accountTemplate.querySelector('.account-nickname').innerText = account.nickname;
   accountTemplate.querySelector('.account-trips').innerText = account.trips.length;
-  accountTemplate.id = 'account-template' + AccountBlockCnt;
+  accountTemplate.id = 'account-template' + accountBlockCount;
   document.getElementById("account-block").appendChild(accountTemplate);
 }
 
@@ -278,6 +278,45 @@ async function submitTrip(data = '') {
   populateTripForm(trip);
 }
 
+function populateTripBlock(tripArray) {
+    let firstTrip = getTripObjectFromResult(tripArray[0]);
+    populateTripForm(firstTrip);
+
+    let tripBlock = document.getElementById("trip-block");
+    tripBlock.innerHTML = "";
+
+    tripArray.forEach(function(element) {
+        let trip = getTripObjectFromResult(element);
+        addNewTripToBlock(trip);
+    });
+}
+
+function addNewTripToBlock(trip) {
+    let tripBlock = document.getElementById("trip-block");
+    let tripBlockCount = tripBlock.childElementCount;
+
+    let tripTemplate = document.getElementById('trip-template').content.cloneNode(true);
+    tripTemplate.querySelector('.trip-id').innerText = trip.id;
+    tripTemplate.querySelector('.trip-leaving').innerText = trip.leaving;
+    tripTemplate.querySelector('.trip-arriving').innerText = trip.arriving;
+    tripTemplate.querySelector('.trip-departing').innerText = trip.departing.name;
+    tripTemplate.querySelector('.trip-destination').innerText = trip.destination.name;
+    tripTemplate.querySelector('.trip-mode').innerText = trip.mode;
+    tripTemplate.querySelector('.trip-discoverable').innerText = trip.discoverable;
+    tripTemplate.querySelector('.trip-attending').innerText = trip.attending.length;
+    tripTemplate.id = 'trip-template' + tripBlockCount
+    document.getElementById("trip-block").appendChild(tripTemplate);
+}
+
+async function editTrip(event) {
+  let idToEdit = event.currentTarget.parentNode.querySelector('.trip-id').innerText;
+  let trip = Object.create(Trip);
+
+  let result = await sendRequest('/trip/' + idToEdit);
+  trip = getTripObjectFromResult(result);
+  populateTripForm(trip);
+}
+
 async function getTripForm() {
   let trip = Object.create(Trip);
   trip.id = $('#trip-id-input').val();
@@ -333,11 +372,6 @@ async function processRequestForTrip() { //convert to trip for get
   let formTrip = Object.create(Trip);
   formTrip = await getTripForm(); //get trip fields from form
 
-    let a = formTrip.departing.name;
-    let b = formTrip.destination.name;
-    let c = formTrip.leaving;
-    let d = formTrip.arriving;
-
   if (formTrip == null) {
     alertUser("Request not send due to error")
   } else {
@@ -354,36 +388,30 @@ async function processRequestForTrip() { //convert to trip for get
       result = await sendRequest('/trip' +
         '/departing/' + formTrip.departing.name + '/leaving/' + formTrip.leaving +
         '/destination/' + formTrip.destination.name + '/arriving/' + formTrip.arriving);
-      let trip = getTripObjectFromResult(result);
-      populateTripForm(trip);
+      populateTripBlock(result);
     } else if (formTrip.departing.name != "" && formTrip.departing.name != null &&
       formTrip.destination.name != "" && formTrip.destination.name != null) {
       // Time for queries need to be in format 2019-01-01 00:00 to work NOT 2019-01-01T00:00:00
       result = await sendRequest('/trip' + '/departing/' + formTrip.departing.name + '/destination/' + formTrip.destination.name);
-      let trip = getTripObjectFromResult(result);
-      populateTripForm(trip);
+      populateTripBlock(result);
     } else if (formTrip.departing.name != "" && formTrip.departing.name != null &&
       formTrip.leaving != "" && formTrip.leaving != null) {
       // Time for queries need to be in format 2019-01-01 00:00 to work NOT 2019-01-01T00:00:00
       result = await sendRequest('/trip' + '/departing/' + formTrip.departing.name + '/leaving/' + formTrip.leaving);
-      let trip = getTripObjectFromResult(result);
-      populateTripForm(trip);
+      populateTripBlock(result);
     } else if (formTrip.destination.name != "" && formTrip.destination.name != null &&
       formTrip.arriving != "" && formTrip.arriving != null) {
       // Time for queries need to be in format 2019-01-01 00:00 to work NOT 2019-01-01T00:00:00
       result = await sendRequest('/trip' + '/destination/' + formTrip.destination.name + '/arriving/' + formTrip.arriving);
-      let trip = getTripObjectFromResult(result);
-      populateTripForm(trip);
+      populateTripBlock(result);
     } else if (formTrip.departing.name != "" && formTrip.departing.name != null) {
       // Time for queries need to be in format 2019-01-01 00:00 to work NOT 2019-01-01T00:00:00
       result = await sendRequest('/trip' + '/departing/' + formTrip.departing.name);
-      let trip = getTripObjectFromResult(result);
-      populateTripForm(trip);
+      populateTripBlock(result);
     } else if (formTrip.destination.name != "" && formTrip.destination.name != null) {
       // Time for queries need to be in format 2019-01-01 00:00 to work NOT 2019-01-01T00:00:00
       result = await sendRequest('/trip' + '/destination/' + formTrip.destination.name);
-      let trip = getTripObjectFromResult(result);
-      populateTripForm(trip);
+      populateTripBlock(result);
     } else {
       alertUser("No identifiable information provided" +
         "\nPlease enter an Id, leaving, arriving, departing, destination", 'alert-dismissible');

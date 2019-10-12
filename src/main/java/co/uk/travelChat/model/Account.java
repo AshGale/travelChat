@@ -1,11 +1,11 @@
 package co.uk.travelChat.model;
 
 import lombok.*;
-import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Document(collection = "accountTable")
@@ -20,8 +20,9 @@ public class Account {
     private String id;
     private String name;
     @NotNull
-    @UniqueElements //todo fix
+    @Size(min = 5)
     private String nickname;
+    //@UniqueElements
     private List<String> trips;
 
     @Override

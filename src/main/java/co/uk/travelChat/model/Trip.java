@@ -5,6 +5,8 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -25,12 +27,17 @@ public class Trip {
 
     @Id
     private String id;
+    @FutureOrPresent
     private LocalDateTime leaving;//leaving time for trip//2019-01-01T00:00:00.000+00:00//"2019-01-01T23:00:00"
+    @FutureOrPresent
     private LocalDateTime arriving;//arriving at time
+    @NotNull
     private Location departing;//departing location
+    @NotNull
     private Location destination;//destination trip end
     private ModeOfTransport mode;
     private Boolean discoverable; //  not implemented
+    // @UniqueElements
     private List<String> attending;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 
 @RestController
@@ -32,7 +33,7 @@ public class TripController {
     }
 
     @PostMapping
-    public Mono<Trip> createTrip(@RequestBody Trip trip) {
+    public Mono<Trip> createTrip(@Valid @RequestBody Trip trip) {
         //todo add in check to see if trip exists already, if so return that trip
         //TODO check who is in the attending, then alert those people about the trip
         return tripService.createTrip(trip);

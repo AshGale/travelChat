@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
@@ -26,12 +27,11 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 public class TripControllerTest {
 
-
-    private static final String DEFAULT_TIME = "2019-01-01 00:00";
-    private static final LocalDateTime DEFAULT_LEAVING =
-            LocalDateTime.parse(DEFAULT_TIME, Trip.getFormatter());
-    private static final LocalDateTime DEFAULT_ARRIVING =
-            LocalDateTime.parse(DEFAULT_TIME, Trip.getFormatter()).plusHours(1);
+    private static final String DEFAULT_TIME = "2019-01-01T00:00";
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private static final LocalDateTime DEFAULT_LEAVING = LocalDateTime.parse(DEFAULT_TIME);
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private static final LocalDateTime DEFAULT_ARRIVING = LocalDateTime.parse(DEFAULT_TIME).plusHours(1);
 
     private static final String DEFAULT_ID = "5d46b4c5966049317459ea50";
     private static final String SAVE_ID = "5d46b4c5966049317459ea51";
@@ -143,7 +143,7 @@ public class TripControllerTest {
     @Test
     public void findTripLeavingSamePlaceAndTime() {
         webTestClient.get().uri(
-                "/trip/departing/" + DEFAULT_DEPARTING.getName() + "/leaving/" + Trip.formatToSting(DEFAULT_LEAVING))
+                "/trip/departing/" + DEFAULT_DEPARTING.getName() + "/leaving/" + DEFAULT_LEAVING)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -169,7 +169,7 @@ public class TripControllerTest {
     @Test
     public void findTripsByDestinationTime() {
         webTestClient.get().uri(
-                "/trip/destination/" + DEFAULT_DESTINATION.getName() + "/arriving/" + Trip.formatToSting(DEFAULT_ARRIVING))
+                "/trip/destination/" + DEFAULT_DESTINATION.getName() + "/arriving/" + DEFAULT_ARRIVING)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -182,8 +182,8 @@ public class TripControllerTest {
     @Test
     public void findByDepartingDestinationTime() {
         webTestClient.get().uri(
-                "/trip/departing/" + DEFAULT_DEPARTING.getName() + "/leaving/" + Trip.formatToSting(DEFAULT_LEAVING) +
-                        "/destination/" + DEFAULT_DESTINATION.getName() + "/arriving/" + Trip.formatToSting(DEFAULT_ARRIVING))
+                "/trip/departing/" + DEFAULT_DEPARTING.getName() + "/leaving/" + DEFAULT_LEAVING +
+                        "/destination/" + DEFAULT_DESTINATION.getName() + "/arriving/" + DEFAULT_ARRIVING)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)

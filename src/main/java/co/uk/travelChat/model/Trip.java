@@ -44,7 +44,8 @@ public class Trip {
         this.mode = mode;
     }
 
-    //todo move out to util class
+    //todo move out to util class\
+    //Deprecated
     public static String formatToSting(LocalDateTime localDateTime) {
         return localDateTime.format(formatter);
 

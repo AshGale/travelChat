@@ -1,14 +1,14 @@
 package co.uk.travelChat.model;
 
 import lombok.*;
-import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
-@Document(collection="accountTable")
+@Document(collection = "accountTable")
 @Data
 @Getter
 @Setter
@@ -20,9 +20,10 @@ public class Account {
     private String id;
     private String name;
     @NotNull
-    @UniqueElements
+    @Size(min = 5)
     private String nickname;
-    private List<String> trips;//TODO could add as list of keys, not full obj's // here *
+    //@UniqueElements
+    private List<String> trips;
 
     @Override
     public String toString() {

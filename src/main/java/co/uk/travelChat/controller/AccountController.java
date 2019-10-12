@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -30,12 +31,12 @@ public class AccountController {
     }
 
     @PostMapping()
-    public Mono<Account> saveAccount(@RequestBody Account account){
+    public Mono<Account> saveAccount(@Valid @RequestBody Account account) {
         return accountService.saveAccount(account);
     }
 
     @DeleteMapping(value = "/{id}")
-    public Mono<Void> deleteAccountById(@PathVariable String id){
+    public Mono<Void> deleteAccountById(@PathVariable String id) {
         return accountService.deleteAccountById(id);
     }
 
@@ -58,7 +59,6 @@ public class AccountController {
     public Mono<List<String>> getAllTripsForAccountByNickname(@PathVariable String nickname) {
         return accountService.getAllTripsForAccountByNickname(nickname);
     }
-
 
 
 }

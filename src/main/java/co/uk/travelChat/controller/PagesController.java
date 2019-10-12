@@ -48,5 +48,10 @@ public class PagesController {
         return "my/account";
     }
 
+    @GetMapping("/editor")
+    public String editor() {
+        return "editor";
+    }
+
 
 }

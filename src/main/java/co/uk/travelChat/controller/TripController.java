@@ -2,19 +2,19 @@ package co.uk.travelChat.controller;
 
 import co.uk.travelChat.model.Trip;
 import co.uk.travelChat.service.TripService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping(path = "/trip", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TripController {
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private final TripService tripService;
 
@@ -32,19 +32,8 @@ public class TripController {
         return tripService.deleteAllTrips();
     }
 
-    // * endpoints with use
-    //create trip
-    //update trip for group Venture// not implemented
-    //get trip by id
-    //delete trip by id
-    //get all trips where leaving, departing and mode
-    //get all trips where leaving, arriving, departing, destination, mode =
-    //get all trips where departing and mode
-    //add location to trip
-
-    //Crud
     @PostMapping
-    public Mono<Trip> createTrip(@RequestBody Trip trip) {
+    public Mono<Trip> createTrip(@Valid @RequestBody Trip trip) {
         //todo add in check to see if trip exists already, if so return that trip
         //TODO check who is in the attending, then alert those people about the trip
         return tripService.createTrip(trip);
@@ -68,9 +57,10 @@ public class TripController {
 
     @GetMapping("/departing/{departing}/leaving/{leaving}")
     public Flux<Trip> findTripLeavingSamePlaceAndTime(@PathVariable("departing") String departing,
-                                                      @PathVariable("leaving") String leaving) {
-        LocalDateTime leavingTime = LocalDateTime.parse(leaving, formatter);
-        return tripService.findByDeparting_NameAndLeaving(departing, leavingTime);
+                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                      @PathVariable("leaving") LocalDateTime leaving) {
+        System.out.println(leaving.toString());
+        return tripService.findByDeparting_NameAndLeaving(departing, leaving);
     }
 
     @GetMapping("/departing/{departing}/destination/{destination}")
@@ -86,20 +76,20 @@ public class TripController {
 
     @GetMapping("/destination/{destination}/arriving/{arriving}")
     public Flux<Trip> findTripsByDestinationTime(@PathVariable("destination") String destination,
-                                                 @PathVariable("arriving") String arriving) {
-        LocalDateTime arrivingTime = LocalDateTime.parse(arriving, formatter);
-        return tripService.findByDestination_NameAndArriving(destination, arrivingTime);
+                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                 @PathVariable("arriving") LocalDateTime arriving) {
+        return tripService.findByDestination_NameAndArriving(destination, arriving);
     }
 
     @GetMapping("/departing/{departing}/leaving/{leaving}/destination/{destination}/arriving/{arriving}")
     public Flux<Trip> findByDepartingDestinationTime(@PathVariable("departing") String departing,
-                                                     @PathVariable("leaving") String leaving,
+                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                     @PathVariable("leaving") LocalDateTime leaving,
                                                      @PathVariable("destination") String destination,
-                                                     @PathVariable("arriving") String arriving) {
-        LocalDateTime leavingTime = LocalDateTime.parse(leaving, formatter);
-        LocalDateTime arrivingTime = LocalDateTime.parse(arriving, formatter);
+                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                     @PathVariable("arriving") LocalDateTime arriving) {
         return tripService.findByDeparting_NameAndLeavingAndDestination_NameAndArriving(
-                departing, leavingTime, destination, arrivingTime);
+                departing, leaving, destination, arriving);
     }
 
 }

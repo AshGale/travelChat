@@ -2,105 +2,206 @@
 <html>
 <head>
     <title>Travel Chat</title>
+    <!-- Webjar References -->
+    <script src="webjars/jquery/3.3.1/jquery.min.js"></script>
+    <script src="webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Boostrap References -->
-    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
-    <script crossorigin="anonymous"
-            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-            src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script crossorigin="anonymous"
-            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-            src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script crossorigin="anonymous"
-            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-            src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="webjars/bootstrap-datetimepicker/2.4.2/js/bootstrap-datetimepicker.js"></script>
+    <link href="webjars/bootstrap-datetimepicker/2.4.2/css/bootstrap-datetimepicker.css" rel="stylesheet">
 
     <script src="../js/web-reuse.js" type="text/javascript"></script>
+    <script src="../js/train.js" type="text/javascript"></script>
 </head>
 <style>
-
-    .first-slide, .second-slide, .third-slide {
-        width: 100%;
-        height: auto;
-        background-repeat: no-repeat;
-        background-size: cover;
-
-        -webkit-transform-style: preserve-3d;
-        -moz-transform-style: preserve-3d;
-        transform-style: preserve-3d;
-      }
-      .carousel-caption {
-        z-index: 10;
-        top: 50%;
-        transform: translateY(-50%);
-        bottom: initial;
-      }
-
-      .cards-block {
-        margin-top: 1rem;
-        text-align: center;
-      }
-
-      #myCarousel {
-        margin-top: 3rem;
-      }
-
-      @media (max-width: 25rem) {
-        #myCarousel h1{
-          font-size: 0rem;
-        }
-      }
 </style>
 <meta content="width=device-width, initial-scale=1" name="viewport">
-<body >
-  <header>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    <a class="navbar-brand" href="/home">TravelChat Navigation</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-        <li class="nav-item active">
-          <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/commute">Commute</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/layover">Layover</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/train">Train</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/bus">Bus</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/walk">Walk</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/explore">Explore</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/my/account">Account</a>
-        </li>
-      </ul>
+<body>
+<template id="trip-template">
+    <div class="m-2 p-2 border border-dark">
+        <div class="trip-id"></div>
+        <div class="trip-leaving"></div>
+        <div class="trip-arriving"></div>
+        <div class="trip-departing"></div>
+        <div class="trip-destination"></div>
+        <div class="trip-mode"></div>
+        <div class="trip-discoverable"></div>
+        <div class="trip-attending"></div>
+        <button class="btn-secondary" onclick="editTrip(event)">Edit Trip &raquo;</button>
     </div>
-  </nav>
-  </header>
+</template>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/home">TravelChat Navigation</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
+                aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/commute">Commute</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/layover">Layover</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/train">Train</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/bus">Bus</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/walk">Walk</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/explore">Explore</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/my/account">Account</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<div class="container">
+    <div>name of logged in: use spring security is done</div>
+    <input id="account-name-input"
+           name="account-name-input"
+           type="text"
+           class="form-control input-md"
+           placeholder="What is the Name for the Account"
+           title="Please enter your Actual Name, protected">
 
+    <h2>Explore Train Journeys</h2>
+    <div></div>
 
+    <button id="create-trip-btn" class="btn btn-secondary" data-toggle="collapse" data-target="#createTrainTrip">
+        Create a new Train Trip
+    </button>
+    <div id="createTrainTrip" class="container collapse">
+        <form id="form-train-trip">
+            <fieldset><!--To draw a box around the form-->
+                <legend>Trips</legend>
 
+                <div class="form-group row d-none">
+                    <label class="col-sm-3 col-form-label font-weight-bold"
+                           for="trip-id-input">Id</label>
+                    <div class="col-sm-9">
+                        <input id="trip-id-input" name="trip-id-input" type="text"
+                               class="form-control" placeholder="primary key"
+                               title="Id of the trip to update eg: 507f1f77bcf86cd799439000">
 
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label font-weight-bold"
+                           for="trip-leaving-input">Leaving at: </label>
+                    <div class="col-sm-9">
+                        <input id="trip-leaving-input" name="trip-leaving-input" type="text"
+                               class="form-control" placeholder="Leaving at date time"
+                               title='The time the trip starts eg "2019-01-01T23:00:00"'
+                               data-date-format="yyyy-mm-ddTHH:ii:ss">
 
-  <!-- FOOTER -->
-  <footer class="container">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label font-weight-bold"
+                           for="trip-arriving-input">Arriving at: </label>
+                    <div class="col-sm-9">
+                        <input id="trip-arriving-input" name="trip-arriving-input" type="text"
+                               class="form-control" placeholder="Arriving at date time"
+                               title='The time the trip ends eg "2019-01-01T23:00:00"'
+                               data-date-format="yyyy-mm-ddTHH:ii:ss">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label font-weight-bold"
+                           for="trip-departing-input">Departing from: </label>
+                    <div class="col-sm-9">
+                        <input id="trip-departing-input" name="trip-departing-input" type="text"
+                               class="form-control" placeholder="Departing Name"
+                               title="Name of the departing location">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label font-weight-bold"
+                           for="trip-destination-input">Traveling too: </label>
+                    <div class="col-sm-9">
+                        <input id="trip-destination-input" name="trip-destination-input" type="text"
+                               class="form-control" placeholder="Destination name"
+                               title="Name of the ending destination location">
+                    </div>
+                </div>
+                <!--                    dropdown-->
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label font-weight-bold"
+                           for="trip-mode-input">Mode of Transport: </label>
+                    <div class="col-sm-9">
+                        <select id="trip-mode-input" name="trip-mode-input"
+                                class="form-control" title='ModeOfTransport eg Train, Walk ect'>
+                            <option value="Bus">Bus</option>
+                            <option value="Car">Car</option>
+                            <option value="Plane">Plane</option>
+                            <option value="Train">Train</option>
+                            <option value="Walk">Walk</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--                    checkbox-->
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label font-weight-bold"
+                           for="trip-discoverable-input">Discoverable</label>
+                    <div class="col-sm-9 d-flex align-items-start">
+                        <input id="trip-discoverable-input" style="max-width: 40px;"
+                               name="trip-discoverable-input" type="checkbox"
+                               class="form-control" placeholder="true or false"
+                               title='Is your trip able to be found for matching, or is it private?'>
+                    </div>
+                </div>
+                <!--                    checkbox-->
+
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label font-weight-bold"
+                           for="trip-attending-input">Attending</label>
+                    <div class="col-sm-9">
+                        <input id="trip-attending-input" name="trip-attending-input[]" type="text"
+                               placeholder='["a","b","c"]'
+                               class="form-control input-md"
+                               title='The ids of attending accounts in the format ["a","b","c"]'>
+                    </div>
+                </div>
+                <!-- Submit-->
+                <div class="form-group row">
+                    <div class="col-sm-4">
+                        <input id="submit-trip" class="btn-primary form-control input-md" type="submit"
+                               value="Submit">
+                    </div>
+                    <div class="col-sm-4">
+                        <input id="get-trip" class="btn-secondary form-control input-md" type="submit"
+                               value="Get">
+                    </div>
+                    <div class="col-sm-4">
+                        <input id="clear-trip" class="btn form-control input-md" type="submit" value="Clear">
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+        <div class="row p-2" id="trip-block"></div>
+    </div>
+
+    <h2>Your Train Journeys</h2>
+    <div></div>
+</div>
+<!-- FOOTER -->
+<footer class="container">
     <p class="float-right"><a href="#">Back to top</a></p>
     <p>&copy; 2019-2020 MAK TravelChat. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
-  </footer>
+</footer>
 
 </body>

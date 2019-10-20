@@ -5,6 +5,31 @@ window.addEventListener("load", function() {
   document.getElementById("account-name-input").value = "Dean";
   document.getElementById("trip-id-input").value = "5d8784fee246f610b84fdfce";
 
+    //initialize the date time pickers
+    $('#trip-leaving-input').datetimepicker({
+        showMeridian: true,
+        startDate: '+1h',
+        minuteStep: 1,
+    });
+    $('#trip-arriving-input').datetimepicker({
+        showMeridian: true,
+        startDate: '+1h',
+        minuteStep: 1,
+    });
+
+    /*******************testing section************************/
+
+
+    //have input, with hidden dropdown
+    // - on key up check that length of input is greater than 3 characters
+    // - in api, add in a service for Location name starting with, return max 8 names only
+    // - use code to show the dropdown on results greater than 1,
+    // - search when key released, and not 13 ie enter
+
+
+    /*******************testing section************************/
+
+
   //------------------------------------------------------Account------------------------------------------------------
   $('#submit-account').click(function(event) {
     event.preventDefault();
@@ -95,6 +120,14 @@ window.addEventListener("load", function() {
     let tripBlock = document.getElementById("trip-block");
     tripBlock.innerHTML = ""; //clear
   });
+
+    $('#trip-leaving-input').click(function(event) {
+        $('#trip-leaving-input').datetimepicker();
+    });
+
+    $('#trip-arriving-input').click(function(event) {
+        $('#trip-arriving-input').datetimepicker();
+    });
 }); //end load
 
 //------------------------------------------------------Functions------------------------------------------------------

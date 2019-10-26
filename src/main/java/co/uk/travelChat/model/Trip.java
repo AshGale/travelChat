@@ -39,6 +39,8 @@ public class Trip {
     private Boolean discoverable; //  not implemented
     // @UniqueElements
     private List<String> attending;
+    //TODO add for stream line user experience
+    //private List<String> invited;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 

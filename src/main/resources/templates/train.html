@@ -30,6 +30,17 @@
         <button class="btn-secondary" onclick="editTrip(event)">Edit Trip &raquo;</button>
     </div>
 </template>
+<template id="account-template">
+    <div class="m-2 p-2 border border-dark">
+        <div class="account-id d-none"></div>
+        <div class="account-nickname form-control"></div>
+        <input id="find-account-nickname" class="form-control input-md d-none" type="text"
+               placeholder="Add Nickname" onkeypress="keyPressed(event)"
+               title="Enter the nickname of the person you want added to this trip">
+        <button class="btn-secondary d-none" onclick="addAttendee(event)">Add Attendee &raquo;</button>
+        <button class="btn-dark" onclick="removeAccount(event)">Remove Attendee &raquo;</button>
+    </div>
+</template>
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="/home">TravelChat Navigation</a>
@@ -152,7 +163,6 @@
                         </select>
                     </div>
                 </div>
-
                 <!--                    checkbox-->
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label font-weight-bold"
@@ -164,9 +174,8 @@
                                title='Is your trip able to be found for matching, or is it private?'>
                     </div>
                 </div>
-                <!--                    checkbox-->
-
-                <div class="form-group row">
+                <div class="row p-2" id="attending-account-block"></div>
+                <div class="form-group row d-none">
                     <label class="col-sm-3 col-form-label font-weight-bold"
                            for="trip-attending-input">Attending</label>
                     <div class="col-sm-9">
@@ -192,8 +201,10 @@
                 </div>
             </fieldset>
         </form>
-        <div class="row p-2" id="trip-block"></div>
     </div>
+
+    <h2>Invited Train Journeys</h2>
+    <div></div>
 
     <h2>Your Train Journeys</h2>
     <div></div>

@@ -24,6 +24,9 @@ public class Account {
     private String nickname;
     //@UniqueElements
     private List<String> trips;
+    //TODO add for user experience
+    //private List<String> invitations;// list of trips account has been invited too
+    //private List<String> friends;//list of mutual friends for quick reference
 
     @Override
     public String toString() {

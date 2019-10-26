@@ -80,3 +80,29 @@ function get_responce(url = ``) {
             return error;
         });
 }
+
+async function sendRequest(url = '/', method = 'GET', data = '', json = 'true') {
+  // Reuse Function for request to get back the json by default
+  return await fetch(url, {
+    method: method,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+    },
+    body: method == 'GET' ? null : JSON.stringify(data),
+  }).then(async (payload) => {
+    status = payload.status;
+    //        body = json == 'true' ? response.json() : response;
+    body = await payload.json(); //request comes before the data, hence second await
+    return body;
+  }).catch(error => {
+    console.error('Error:', error);
+    let alert = document.getElementById("alertStatus");
+    alert.className = 'alert';
+    alert.classList.add("alert-danger");
+    alert.innerHTML = '<strong>Error during submission </strong> ' + error;
+  });
+}
+
+function convertToArrayString(string) {
+  return JSON.stringify(string, "", 0)
+}

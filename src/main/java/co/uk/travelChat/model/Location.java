@@ -17,6 +17,7 @@ public class Location {
 
     @Id
     private String id;
+    //    @UniqueElements
     @NotNull
     private String name;
     private double longitude;

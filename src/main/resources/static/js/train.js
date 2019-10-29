@@ -33,11 +33,13 @@ window.addEventListener("load", function() {
             //hide create trip section
             document.getElementById("create-trip-btn").innerText = "Create a new Train Trip";
         } else {
-
+            let alert = document.getElementById("alertStatus");
+            alert.className = '';
+            alert.innerHTML = null;
             document.getElementById("create-trip-btn").innerText = "Cancel New Trip";
 
             //add logged in user to attending tiles for a new trip automatically
-            let userName = document.getElementById("account-name-input").value;
+            let userName = document.getElementById("account-name-input").value.toLowerCase();
 
             let initialAttending = convertToArrayString([userName]);
 
@@ -49,8 +51,21 @@ window.addEventListener("load", function() {
         }
     });
 
-    //------------------------------------------------------Account------------------------------------------------------
+    $('#submit-trip').click(async function(event) {
+        event.preventDefault();
 
+        let trip = await getTripForm();
+        if (trip == null) {
+          alertUser("Request could not send due to error");
+        } else {
+            trip = submitTrip(trip);
+            if (trip == null) {
+                alertUser("An error occurred");
+            } else {
+                displayPositiveResult("Created", "New Trip was saved successfully");
+            }
+        }
+      });
 }); //end load
 
 //------------------------------------------------------Functions------------------------------------------------------
@@ -63,7 +78,7 @@ function keyPressed(event){
 
 //todo add in search for location name based on input
 
-async function populateAttendingAccountBlock(accountArray) {
+function populateAttendingAccountBlock(accountArray) {
 
     let accountBlock = document.getElementById("attending-account-block");
     accountBlock.innerHTML = ""; //clear
@@ -117,12 +132,12 @@ function getAccountObjectFromResult(result) {
 
 function removeAccount(event) {
     event.preventDefault();
-    let nickname = event.currentTarget.parentNode.querySelector('.account-nickname').innerText;
+    let nickname = event.currentTarget.parentNode.querySelector('.account-nickname').innerText.toLowerCase();
 
-    let attending = document.getElementById("trip-attending-input");
-    attendingArray = JSON.parse(attending.value);
-    attendingArray = attendingArray.filter(arrayItem => arrayItem !== nickname);
-    attending.value = convertToArrayString(attendingArray);
+    let attending = document.getElementById("trip-attending-input").value;
+    attendingArray = JSON.parse(attending);
+    attendingArray = attendingArray.filter(arrayItem => arrayItem.toLowerCase() !== nickname);
+    document.getElementById("trip-attending-input").value = convertToArrayString(attendingArray);
 
     event.currentTarget.parentNode.remove();//todo fix
 }
@@ -138,7 +153,7 @@ async function addAttendee(event) {
     let result = await sendRequest('/account/nickname/' + nickname);
     account = getAccountObjectFromResult(result);
 
-    let attending = document.getElementById("trip-attending-input").value;
+    let attending = document.getElementById("trip-attending-input").value.toLowerCase();
     attending = JSON.parse(attending);
     attending.push(nickname);
     populateAttendingAccountBlock(attending);
@@ -147,3 +162,58 @@ async function addAttendee(event) {
     document.getElementById("trip-attending-input").value = attendingArray;
 }
 
+async function getTripForm() {
+  let trip = Object.create(Trip);
+
+  trip.leaving = $('#trip-leaving-input').val();
+  trip.arriving = $('#trip-arriving-input').val();
+
+  //get based on name and fill in
+  let departing = $('#trip-departing-input').val();
+  if (departing != "" && departing != null) {
+    let departingLocation = await sendRequest('/location/name/' + departing + "/first");
+    trip.departing = departingLocation;
+  } else {
+    trip.departing.name = null;
+  }
+
+  //get based on name value
+  let destination = $('#trip-destination-input').val();
+  if (destination != "" && destination != null) {
+    let destinationLocation = await sendRequest('/location/name/' + destination + "/first");
+    trip.destination = destinationLocation;
+  } else {
+    trip.destination.name = null;
+  }
+
+  trip.mode = $('#trip-mode-input').val();
+  trip.discoverable = $('#trip-discoverable-input').checked;
+
+    let attending = document.getElementById("trip-attending-input").value;
+    attending = JSON.parse(attending);
+
+  if ($('#trip-attending-input').val() == "" || $('#trip-attending-input').val() == null) { // ensure null is sent when nothing is filled
+    trip.attending = null;
+  } else {
+    try {
+      trip.attending = JSON.parse($('#trip-attending-input').val()); //["5d5827bb9660491f480fad3d"]
+    } catch {
+      let alert = document.getElementById("alertStatus");
+      alert.className = 'alert';
+      alert.classList.add("alert-danger");
+      alert.innerHTML = '<strong>Something went wrong: </strong>Please ensure all the fields are filled in correctly or'
+      + '\nPlease refresh and try again';
+      document.body.scrollTop = 0; // For Safari
+      document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+      //           window.alert("Please ensure attending are in format [\"value\",\"value\"]");
+      return null;
+    }
+  }
+  return await trip;
+}
+
+async function submitTrip(data = '') {
+  let trip = Object.create(Trip);
+
+  return await sendRequest('/trip', 'POST', data);
+}

@@ -1,6 +1,7 @@
 package co.uk.travelChat.model;
 
 import lombok.*;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -19,6 +20,7 @@ public class Account {
     @Id
     private String id;
     private String name;
+    @UniqueElements
     @NotNull
     @Size(min = 5)
     private String nickname;

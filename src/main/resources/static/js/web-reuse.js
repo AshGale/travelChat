@@ -106,3 +106,19 @@ async function sendRequest(url = '/', method = 'GET', data = '', json = 'true') 
 function convertToArrayString(string) {
   return JSON.stringify(string, "", 0)
 }
+
+function displayPositiveResult(status = 'Success', body = 'Action performed successfully') {
+  let alert = document.getElementById("alertStatus");
+  alert.className = 'alert';
+  alert.classList.add("alert-success");
+  alert.innerHTML = '<strong>' + status + '</strong>: ' + body;
+}
+
+function alertUser(message = '<strong>Something wend wrong</strong> check with input data', type = 'alert-danger') {
+  let alert = document.getElementById("alertStatus");
+  alert.className = 'alert';
+  alert.classList.add(type);
+  alert.innerHTML = message;
+  document.body.scrollTop = 0; // For Safari
+  document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+}

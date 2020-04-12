@@ -95,6 +95,7 @@
         Create a new Train Trip
     </button>
     <div id="createTrainTrip" class="container collapse">
+        <br>
         <div id="alertStatus" class=""></div>
         <form id="form-train-trip">
             <fieldset><!--To draw a box around the form-->
@@ -107,8 +108,8 @@
                         <input id="trip-leaving-input" name="trip-leaving-input" type="text"
                                class="form-control" placeholder="Leaving at date time"
                                title='The time the trip starts eg "2019-01-01T23:00:00"'
-                               data-date-format="yyyy-mm-ddTHH:ii:ss">
-
+                               autocomplete="off"
+                               data-date-format="dd-mm-yyyy HH:ii:ss">
                     </div>
                 </div>
                 <div class="form-group row">
@@ -118,7 +119,8 @@
                         <input id="trip-arriving-input" name="trip-arriving-input" type="text"
                                class="form-control" placeholder="Arriving at date time"
                                title='The time the trip ends eg "2019-01-01T23:00:00"'
-                               data-date-format="yyyy-mm-ddTHH:ii:ss">
+                               autocomplete="off"
+                               data-date-format="dd-mm-yyyy HH:ii:ss">
                     </div>
                 </div>
                 <div class="form-group row">

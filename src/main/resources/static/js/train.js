@@ -163,12 +163,16 @@ async function addAttendee(event) {
 }
 
 async function getTripForm() {
-  let trip = Object.create(Trip);
+    let trip = Object.create(Trip);
 
-  trip.leaving = $('#trip-leaving-input').val();
-  trip.arriving = $('#trip-arriving-input').val();
+    trip.leaving = convertToAmericanDate($('#trip-leaving-input').val());
+    trip.arriving = convertToAmericanDate($('#trip-arriving-input').val());
+
+    trip.leaving  = new Date(trip.leaving);
+    trip.arriving = new Date(trip.arriving);
 
   //get based on name and fill in
+  //todo make search on froned, and just send
   let departing = $('#trip-departing-input').val();
   if (departing != "" && departing != null) {
     let departingLocation = await sendRequest('/location/name/' + departing + "/first");

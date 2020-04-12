@@ -21,6 +21,15 @@ public class LocationCrudRepositoryTest {
     private static final String DEFAULT_NAME = "London Victoria";
     private static final Double DEFAULT_LONGITUDE = 51.495213;
     private static final Double DEFAULT_LATITUDE = -0.143897;
+    private static final Location DEFAULT_DEPARTING = new Location(
+            DEFAULT_ID, DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE);
+
+    private static final String DESTINATION_ID = "5d46b4c5966049317459ea71";
+    private static final String DESTINATION_NAME = "London Bridge Station";
+    private static final Double DESTINATION_LONGITUDE = 51.504527;
+    private static final Double DESTINATION_LATITUDE = -0.086392;
+    private static final Location DEFAULT_DESTINATION = new Location(
+            DESTINATION_ID, DESTINATION_NAME, DESTINATION_LONGITUDE, DESTINATION_LATITUDE);
 
     @Autowired
     LocationCrudRepository locationCrudRepository;
@@ -28,8 +37,8 @@ public class LocationCrudRepositoryTest {
     @Before
     public void setUp() throws Exception {
         locationCrudRepository.deleteAll().subscribe();
-        locationCrudRepository.save(new Location(
-                DEFAULT_ID, DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE)).subscribe();
+        locationCrudRepository.save(DEFAULT_DEPARTING).subscribe();
+        locationCrudRepository.save(DEFAULT_DESTINATION).subscribe();
         Thread.sleep(100);//this is to ensure the data is loaded correctl
     }
 

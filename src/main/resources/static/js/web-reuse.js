@@ -107,6 +107,23 @@ function convertToArrayString(string) {
   return JSON.stringify(string, "", 0)
 }
 
+function convertToAmericanDate(date) {
+
+    if(date == null || date == "" || date.length < 6) {
+     return date;
+    }
+
+    let americanDate;
+    //switch day and month for conversion
+    let tempDay = date.substr(0, 3);//get the day and the spacer
+    let tempMonth = date.substr(3, 3);//get the month and the spacer
+
+    // add month, then day, leave the rest of the date the same
+    americanDate = tempMonth + tempDay + trip.leaving.substr(6, trip.leaving.length);
+
+    return americanDate;
+}
+
 function displayPositiveResult(status = 'Success', body = 'Action performed successfully') {
   let alert = document.getElementById("alertStatus");
   alert.className = 'alert';

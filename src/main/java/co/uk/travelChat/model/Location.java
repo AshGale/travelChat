@@ -2,6 +2,7 @@ package co.uk.travelChat.model;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
@@ -17,7 +18,7 @@ public class Location {
 
     @Id
     private String id;
-    //    @UniqueElements
+    @Indexed(unique = true)
     @NotNull
     private String name;
     private double longitude;

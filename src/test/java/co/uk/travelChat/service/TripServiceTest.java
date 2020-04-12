@@ -16,9 +16,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 
@@ -26,8 +28,13 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 public class TripServiceTest {
 
-    private static final LocalDateTime DEFAULT_LEAVING = LocalDateTime.now();
-    private static final LocalDateTime DEFAULT_ARRIVING = DEFAULT_LEAVING.plusHours(1);
+    private String pattern = "EEE MMM dd HH:mm z yyyy";
+    private String end_time = "Sat Mar 28 21:00 GMT 2020";
+    private String start_time = "Sat Mar 28 12:00 GMT 2020";
+    private SimpleDateFormat sdf = new SimpleDateFormat(pattern, Locale.ENGLISH);
+
+    private static Calendar DEFAULT_LEAVING;
+    private static Calendar DEFAULT_ARRIVING;
 
     private static final String DEFAULT_ID = "5d46b4c5966049317459ea50";
     private static final String SAVE_ID = "5d46b4c5966049317459ea51";
@@ -62,6 +69,13 @@ public class TripServiceTest {
 
     @Before
     public void init() throws Exception {
+
+        DEFAULT_LEAVING = Calendar.getInstance();
+        DEFAULT_ARRIVING = Calendar.getInstance();
+
+        DEFAULT_LEAVING.setTime(sdf.parse(start_time));
+        DEFAULT_ARRIVING.setTime(sdf.parse(end_time));
+
         tripCrudRepository.deleteAll().subscribe();
         tripCrudRepository.save(
                 new Trip(DEFAULT_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING,
@@ -155,7 +169,7 @@ public class TripServiceTest {
 
     @Test
     public void sameTimePlaceAndMode() {
-        Flux<Trip> result = tripService.sameTimePlaceAndMode(DEFAULT_LEAVING, DEFAULT_DEPARTING.getName(), DEFAULT_MODE_OF_TRANSPORT);
+        Flux<Trip> result = tripService.sameTimePlaceAndMode(DEFAULT_LEAVING.getTimeInMillis(), DEFAULT_DEPARTING.getName(), DEFAULT_MODE_OF_TRANSPORT);
 
         StepVerifier.create(result)
                 .assertNext(trip -> {

@@ -1,0 +1,8 @@
+Trip mates todo
+
+implement date picker for for new trips
+then add the ability to search for trips bases on time
+convert to long epoc
+
+Convert to thymleaf templates and use it's features
+Also you the javascript literals features as this will help modularize the application.

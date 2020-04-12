@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
-
 @Service
 public class TripService {
 
@@ -47,8 +45,8 @@ public class TripService {
 //    }
 
     public Flux<Trip> sameTimePlaceAndMode(
-            LocalDateTime time, String place, ModeOfTransport mode) {
-        return tripCrudRepository.findAllByLeavingAndDepartingNameAndMode(
+            long time, String place, ModeOfTransport mode) {
+        return tripCrudRepository.findAllByLeaving_timeAndDepartingNameAndMode(
                 time, place, mode);
     }
 
@@ -64,17 +62,17 @@ public class TripService {
         return tripCrudRepository.findByDeparting_NameAndDestination_Name(departing, destination);
     }
 
-    public Flux<Trip> findByDeparting_NameAndLeaving(String departing, LocalDateTime leaving) {
-        return tripCrudRepository.findByDeparting_NameAndLeaving(departing, leaving);
+    public Flux<Trip> findByDeparting_NameAndLeaving(String departing, long leaving) {
+        return tripCrudRepository.findByDeparting_NameAndLeaving_time(departing, leaving);
     }
 
     public Flux<Trip> findByDeparting_NameAndLeavingAndDestination_NameAndArriving(
-            String departing, LocalDateTime leaving, String destination, LocalDateTime arriving) {
+            String departing, long leaving, String destination, long arriving) {
         return tripCrudRepository.
-                findByDeparting_NameAndLeavingAndDestination_NameAndArriving(departing, leaving, destination, arriving);
+                findByDeparting_NameAndLeaving_timeAndDestination_NameAndArriving_time(departing, leaving, destination, arriving);
     }
 
-    public Flux<Trip> findByDestination_NameAndArriving(String destination, LocalDateTime arrivingTime) {
-        return tripCrudRepository.findByDestination_NameAndArriving(destination, arrivingTime);
+    public Flux<Trip> findByDestination_NameAndArriving(String destination, long arrivingTime) {
+        return tripCrudRepository.findByDestination_NameAndArriving_time(destination, arrivingTime);
     }
 }

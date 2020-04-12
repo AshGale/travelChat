@@ -1,8 +1,8 @@
 package co.uk.travelChat.model;
 
 import lombok.*;
-import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
@@ -20,7 +20,7 @@ public class Account {
     @Id
     private String id;
     private String name;
-    @UniqueElements
+    @Indexed(unique = true) //https://stackoverflow.com/questions/3126769/uniqueconstraint-annotation-in-java
     @NotNull
     @Size(min = 5)
     private String nickname;

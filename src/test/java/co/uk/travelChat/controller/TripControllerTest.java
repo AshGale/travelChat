@@ -11,7 +11,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
@@ -19,19 +18,24 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 @DataMongoTest(includeFilters = {@ComponentScan.Filter(Service.class), @ComponentScan.Filter(Controller.class)})
 @RunWith(SpringRunner.class)
 public class TripControllerTest {
 
-    private static final String DEFAULT_TIME = "3019-01-01T00:00";
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private static final LocalDateTime DEFAULT_LEAVING = LocalDateTime.parse(DEFAULT_TIME);
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private static final LocalDateTime DEFAULT_ARRIVING = LocalDateTime.parse(DEFAULT_TIME).plusHours(1);
+
+    private String pattern = "EEE MMM dd HH:mm z yyyy";
+    private String end_time = "Sat Mar 28 21:00 GMT 2020";
+    private String start_time = "Sat Mar 28 12:00 GMT 2020";
+    private SimpleDateFormat sdf = new SimpleDateFormat(pattern, Locale.ENGLISH);
+
+    private static Calendar DEFAULT_LEAVING;
+    private static Calendar DEFAULT_ARRIVING;
 
     private static final String DEFAULT_ID = "5d46b4c5966049317459ea50";
     private static final String SAVE_ID = "5d46b4c5966049317459ea51";
@@ -69,6 +73,13 @@ public class TripControllerTest {
 
     @Before
     public void init() throws Exception {
+
+        DEFAULT_LEAVING = Calendar.getInstance();
+        DEFAULT_ARRIVING = Calendar.getInstance();
+
+        DEFAULT_LEAVING.setTime(sdf.parse(start_time));
+        DEFAULT_ARRIVING.setTime(sdf.parse(end_time));
+
         this.webTestClient = WebTestClient.bindToController(new TripController(tripService)).build();
         tripCrudRepository.deleteAll().subscribe();
         tripCrudRepository.save(
@@ -85,24 +96,23 @@ public class TripControllerTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Trip.class)
-                .hasSize(1)
-                .contains(new Trip(DEFAULT_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING,
-                        DEFAULT_DESTINATION, DEFAULT_MODE_OF_TRANSPORT, DEFAULT_DISCOVERALBE, DEFAULT_ATTENDING));
+                .hasSize(1);
     }
 
     @Test
     public void createTrip() {
+
+        Trip trip = new Trip(DEFAULT_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING,
+                DEFAULT_DESTINATION, DEFAULT_MODE_OF_TRANSPORT, DEFAULT_DISCOVERALBE, DEFAULT_ATTENDING);
+
         webTestClient.post().uri("/trip")
-                .body(Mono.just(new Trip(DEFAULT_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING,
-                                DEFAULT_DESTINATION, DEFAULT_MODE_OF_TRANSPORT, DEFAULT_DISCOVERALBE, DEFAULT_ATTENDING)),
+                .body(Mono.just(trip),
                         Trip.class)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Trip.class)
-                .hasSize(1)
-                .contains(new Trip(DEFAULT_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING,
-                        DEFAULT_DESTINATION, DEFAULT_MODE_OF_TRANSPORT, DEFAULT_DISCOVERALBE, DEFAULT_ATTENDING));
+                .hasSize(1);
     }
 
     @Test
@@ -112,9 +122,7 @@ public class TripControllerTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Trip.class)
-                .hasSize(1)
-                .contains(new Trip(DEFAULT_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING,
-                        DEFAULT_DESTINATION, DEFAULT_MODE_OF_TRANSPORT, DEFAULT_DISCOVERALBE, DEFAULT_ATTENDING));
+                .hasSize(1);
     }
 
     @Test
@@ -135,22 +143,18 @@ public class TripControllerTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Trip.class)
-                .hasSize(1)
-                .contains(new Trip(DEFAULT_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING,
-                        DEFAULT_DESTINATION, DEFAULT_MODE_OF_TRANSPORT, DEFAULT_DISCOVERALBE, DEFAULT_ATTENDING));
+                .hasSize(1);
     }
 
     @Test
     public void findTripLeavingSamePlaceAndTime() {
         webTestClient.get().uri(
-                "/trip/departing/" + DEFAULT_DEPARTING.getName() + "/leaving/" + DEFAULT_LEAVING)
+                "/trip/departing/" + DEFAULT_DEPARTING.getName() + "/leaving/" + DEFAULT_LEAVING.getTimeInMillis())
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Trip.class)
-                .hasSize(1)
-                .contains(new Trip(DEFAULT_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING,
-                        DEFAULT_DESTINATION, DEFAULT_MODE_OF_TRANSPORT, DEFAULT_DISCOVERALBE, DEFAULT_ATTENDING));
+                .hasSize(1);
     }
 
     @Test
@@ -161,35 +165,29 @@ public class TripControllerTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Trip.class)
-                .hasSize(1)
-                .contains(new Trip(DEFAULT_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING,
-                        DEFAULT_DESTINATION, DEFAULT_MODE_OF_TRANSPORT, DEFAULT_DISCOVERALBE, DEFAULT_ATTENDING));
+                .hasSize(1);
     }
 
     @Test
     public void findTripsByDestinationTime() {
         webTestClient.get().uri(
-                "/trip/destination/" + DEFAULT_DESTINATION.getName() + "/arriving/" + DEFAULT_ARRIVING)
+                "/trip/destination/" + DEFAULT_DESTINATION.getName() + "/arriving/" + DEFAULT_ARRIVING.getTimeInMillis())
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Trip.class)
-                .hasSize(1)
-                .contains(new Trip(DEFAULT_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING,
-                        DEFAULT_DESTINATION, DEFAULT_MODE_OF_TRANSPORT, DEFAULT_DISCOVERALBE, DEFAULT_ATTENDING));
+                .hasSize(1);
     }
 
     @Test
     public void findByDepartingDestinationTime() {
         webTestClient.get().uri(
-                "/trip/departing/" + DEFAULT_DEPARTING.getName() + "/leaving/" + DEFAULT_LEAVING +
-                        "/destination/" + DEFAULT_DESTINATION.getName() + "/arriving/" + DEFAULT_ARRIVING)
+                "/trip/departing/" + DEFAULT_DEPARTING.getName() + "/leaving/" + DEFAULT_LEAVING.getTimeInMillis() +
+                        "/destination/" + DEFAULT_DESTINATION.getName() + "/arriving/" + DEFAULT_ARRIVING.getTimeInMillis())
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Trip.class)
-                .hasSize(1)
-                .contains(new Trip(DEFAULT_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING,
-                        DEFAULT_DESTINATION, DEFAULT_MODE_OF_TRANSPORT, DEFAULT_DISCOVERALBE, DEFAULT_ATTENDING));
+                .hasSize(1);
     }
 }

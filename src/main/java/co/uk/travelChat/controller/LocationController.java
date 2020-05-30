@@ -17,9 +17,9 @@ public class LocationController {
         this.locationService = locationService;
     }
 
-    @GetMapping
-    public Flux<Location> getAllLocations() {
-        return locationService.getAllLocations();
+    @GetMapping("/{pageSize}/{offset}")
+    public Flux<Location> getAllLocations(@PathVariable int pageSize, @PathVariable int offset) {
+        return locationService.getAllLocations(pageSize, offset);
     }
 
     @PostMapping
@@ -27,27 +27,31 @@ public class LocationController {
         return locationService.saveLocation(location);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public Mono<Void> deleteLocaionById(@PathVariable String id) {
         //TODO should really be check to see if used, and will requect otherwise
         return locationService.deleteLocationById(id);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public Mono<Location> getLocationById(@PathVariable String id) {
         return locationService.getLocationById(id);
     }
 
+    @GetMapping("/like/{name}")
+    public Flux<Location> findLike(@PathVariable String name) {
+        return locationService.findLike(name);
+    }
+
     @GetMapping("/name/{name}")
-    public Flux<Location> getAllLocationsByName(@PathVariable("name") String name) {
-        return locationService.getAllLocationsByName(name);
+    public Mono<Location> getAllLocationsByName(@PathVariable("name") String name) {
+        return locationService.getLocationById(name);
     }
 
-    @GetMapping("/name/{name}/first")
-    public Mono<Location> findFirstByName(@PathVariable("name") String name) {
-        return locationService.findFirstLocationByName(name);
-    }
-
+//    @GetMapping("/name/{name}/first")
+//    public Mono<Location> findFirstByName(@PathVariable("name") String name) {
+//        return locationService.findFirstLocationByName(name);
+//    }
 
     @GetMapping("/longitude/{longitude}/latitude/{latitude}")
     public Flux<Location> getAllbyLongitudeAndLatitude(
@@ -56,10 +60,10 @@ public class LocationController {
         return locationService.getAllbyLongitudeAndLatitude(longitude, latitude);
     }
 
-    @GetMapping("/longitude/{longitude}/latitude/{latitude}/name/{name}")
-    public Flux<Location> getAllbyLocation(@PathVariable("name") String name,
-                                           @PathVariable("longitude") double longitude,
-                                           @PathVariable("latitude") double latitude) {
-        return locationService.getAllByLocation(name, longitude, latitude);
-    }
+//    @GetMapping("/longitude/{longitude}/latitude/{latitude}/name/{name}")
+//    public Flux<Location> getAllbyLocation(@PathVariable("name") String name,
+//                                           @PathVariable("longitude") double longitude,
+//                                           @PathVariable("latitude") double latitude) {
+//        return locationService.getAllByLocation(name, longitude, latitude);
+//    }
 }

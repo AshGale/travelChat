@@ -25,9 +25,6 @@ public class LocationControllerTest {
     private static final Double DEFAULT_LONGITUDE = 51.495213;
     private static final Double DEFAULT_LATITUDE = -0.143897;
 
-    private static final String save_id = "5d46b4c5966049317459ea71";
-    private static final String delete_id = "5d46b4c5966049317459ea72";
-
     @Autowired
     private LocationCrudRepository locationCrudRepository;
 
@@ -43,8 +40,7 @@ public class LocationControllerTest {
     public void setUp() throws Exception {
         this.webTestClient = WebTestClient.bindToController(new LocationController(locationService)).build();
         locationCrudRepository.deleteAll().subscribe();
-        locationCrudRepository.save(new Location(
-                DEFAULT_ID, DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE)).subscribe();
+        locationCrudRepository.save(new Location(DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE)).subscribe();
         Thread.sleep(100);//this is to ensure the data is loaded correctly
     }
 
@@ -56,28 +52,28 @@ public class LocationControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Location.class)
                 .hasSize(1)
-                .contains(new Location(DEFAULT_ID, DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE));
+                .contains(new Location(DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE));
     }
 
     @Test
     public void saveLocation() {
         webTestClient.post().uri("/location")
                 .body(Mono.just(
-                        new Location(save_id, DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE)), Location.class)
+                        new Location(DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE)), Location.class)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Location.class)
                 .hasSize(1)
-                .contains(new Location(save_id, DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE));
+                .contains(new Location(DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE));
     }
 
     @Test
     public void deleteLocaionById() {
         Mono<Location> location = locationService.saveLocation(new Location(
-                delete_id, "delete", 0.1, -0.2));
+                "delete", 0.1, -0.2));
 
-        webTestClient.delete().uri("/location/" + delete_id)
+        webTestClient.delete().uri("/location/" + "delete")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(Void.class);
@@ -85,13 +81,13 @@ public class LocationControllerTest {
 
     @Test
     public void getLocationById() {
-        webTestClient.get().uri("/location/" + DEFAULT_ID)
+        webTestClient.get().uri("/location/" + "delete")
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Location.class)
                 .hasSize(1)
-                .contains(new Location(DEFAULT_ID, DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE));
+                .contains(new Location(DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE));
     }
 
     @Test
@@ -102,7 +98,7 @@ public class LocationControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Location.class)
                 .hasSize(1)
-                .contains(new Location(DEFAULT_ID, DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE));
+                .contains(new Location(DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE));
     }
 
     @Test
@@ -113,7 +109,7 @@ public class LocationControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Location.class)
                 .hasSize(1)
-                .contains(new Location(DEFAULT_ID, DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE));
+                .contains(new Location(DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE));
     }
 
     @Test
@@ -124,7 +120,7 @@ public class LocationControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Location.class)
                 .hasSize(1)
-                .contains(new Location(DEFAULT_ID, DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE));
+                .contains(new Location(DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE));
     }
 
     @Test
@@ -138,6 +134,6 @@ public class LocationControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Location.class)
                 .hasSize(1)
-                .contains(new Location(DEFAULT_ID, DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE));
+                .contains(new Location(DEFAULT_NAME, DEFAULT_LONGITUDE, DEFAULT_LATITUDE));
     }
 }

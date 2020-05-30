@@ -464,7 +464,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/account/nickname/theDean",
+              "raw": "http://localhost:8080/account/nickname/thedean",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -473,7 +473,7 @@
               "path": [
                 "account",
                 "nickname",
-                "theDean"
+                "thedean"
               ]
             }
           },

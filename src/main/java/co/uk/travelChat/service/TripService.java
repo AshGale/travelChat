@@ -45,34 +45,34 @@ public class TripService {
 //    }
 
     public Flux<Trip> sameTimePlaceAndMode(
-            long time, String place, ModeOfTransport mode) {
-        return tripCrudRepository.findAllByLeaving_timeAndDepartingNameAndMode(
+            Long time, String place, ModeOfTransport mode) {
+        return tripCrudRepository.findAllByLeavingAndDepartingAndMode(
                 time, place, mode);
     }
 
     public Flux<Trip> findByDeparting_Name(String name) {
-        return tripCrudRepository.findByDeparting_Name(name);
+        return tripCrudRepository.findByDeparting(name);
     }
 
     public Flux<Trip> findByDestination_Name(String name) {
-        return tripCrudRepository.findByDestination_Name(name);
+        return tripCrudRepository.findByDestination(name);
     }
 
     public Flux<Trip> findByDeparting_NameAndDestination_Name(String departing, String destination) {
-        return tripCrudRepository.findByDeparting_NameAndDestination_Name(departing, destination);
+        return tripCrudRepository.findByDepartingAndDestination(departing, destination);
     }
 
-    public Flux<Trip> findByDeparting_NameAndLeaving(String departing, long leaving) {
-        return tripCrudRepository.findByDeparting_NameAndLeaving_time(departing, leaving);
+    public Flux<Trip> findByDeparting_NameAndLeaving(String departing, Long leaving) {
+        return tripCrudRepository.findByDepartingAndLeaving(departing, leaving);
     }
 
     public Flux<Trip> findByDeparting_NameAndLeavingAndDestination_NameAndArriving(
-            String departing, long leaving, String destination, long arriving) {
+            String departing, Long leaving, String destination, Long arriving) {
         return tripCrudRepository.
-                findByDeparting_NameAndLeaving_timeAndDestination_NameAndArriving_time(departing, leaving, destination, arriving);
+                findByDepartingAndLeavingAndDestinationAndArriving(departing, leaving, destination, arriving);
     }
 
-    public Flux<Trip> findByDestination_NameAndArriving(String destination, long arrivingTime) {
-        return tripCrudRepository.findByDestination_NameAndArriving_time(destination, arrivingTime);
+    public Flux<Trip> findByDestination_NameAndArriving(String destination, Long arrivingTime) {
+        return tripCrudRepository.findByDestinationAndArriving(destination, arrivingTime);
     }
 }

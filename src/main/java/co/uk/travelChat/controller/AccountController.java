@@ -20,9 +20,9 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    @GetMapping()
-    public Flux<Account> getAllAccounts() {
-        return accountService.getAllAccounts();
+    @GetMapping("{pageSize}/{offset}")
+    public Flux<Account> getAllAccounts(@PathVariable int pageSize, @PathVariable int offset) {
+        return accountService.getAllAccounts(pageSize, offset);
     }
 
     @GetMapping(value = "/{id}")
@@ -40,14 +40,14 @@ public class AccountController {
         return accountService.deleteAccountById(id);
     }
 
+    @GetMapping(value = "/nickname/{nickname}")
+    public Mono<Account> getAccountByNickname(@PathVariable String nickname) {
+        return accountService.getAccountById(nickname);
+    }
+
     @GetMapping(value = "/name/{name}")
     public Flux<Account> getAccountByName(@PathVariable String name) {
         return accountService.getAccountsByName(name);
-    }
-
-    @GetMapping(value = "/nickname/{nickname}")
-    public Mono<Account> getAccountByNickname(@PathVariable String nickname) {
-        return accountService.getAccountByNickname(nickname);
     }
 
     @GetMapping(value = "/{id}/trips")

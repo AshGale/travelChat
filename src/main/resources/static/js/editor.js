@@ -1,7 +1,7 @@
 window.addEventListener("load", function() {
 
   //debug
-  //document.getElementById("account-nickname-input").value = "theDean";
+  //document.getElementById("account-nickname-input").value = "thedean";
   document.getElementById("account-name-input").value = "Dean";
   document.getElementById("trip-id-input").value = "5d8784fee246f610b84fdfce";
 

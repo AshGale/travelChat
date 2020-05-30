@@ -3,7 +3,6 @@ package co.uk.travelChat.controller;
 import co.uk.travelChat.model.Account;
 import co.uk.travelChat.repository.AccountCrudRepository;
 import co.uk.travelChat.service.AccountService;
-import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,13 +24,11 @@ import static org.junit.Assert.assertEquals;
 @DataMongoTest(includeFilters = {@ComponentScan.Filter(Service.class), @ComponentScan.Filter(Controller.class)})
 public class AccountControllerTest {
 
-    private static final String defaultId = "507f1f77bcf86cd799439011";
+    private static final String defaultNickname = "nickname";
 
     private static final List<String> tripList = Arrays.asList("507f1f77bcf86cd799439010");
 
-//    private static Account testAccount = new Account(null, "account", "account", new ArrayList<>());
-
-    private static final Account savedAccount = new Account(defaultId, "account", "account", tripList);
+    private static final Account savedAccount = new Account(defaultNickname, "displayName", tripList);
 
     @Autowired
     private AccountCrudRepository accountCrudRepository;
@@ -56,25 +53,19 @@ public class AccountControllerTest {
         exampleTrips = new ArrayList<>();
         accountMap = new LinkedHashMap<>();
 
-        accountMap.put(0, new Account("507f1f77bcf86cd799439012", "Adam", "andy123", new ArrayList<>()));
-        exampleTrips.add(ObjectId.get().toString());
+        accountMap.put(0, new Account("andy123", "Adam", new ArrayList<>()));
         accountMap.get(0).setTrips(exampleTrips);
 
         exampleTrips = new ArrayList<>();
-        accountMap.put(1, new Account("507f1f77bcf86cd799439013", "Ben", "benny", new ArrayList<>()));
-        exampleTrips.add(ObjectId.get().toString());
-        exampleTrips.add(ObjectId.get().toString());
+        accountMap.put(1, new Account("benny", "Ben", new ArrayList<>()));
         accountMap.get(1).setTrips(exampleTrips);
 
         exampleTrips = new ArrayList<>();
-        accountMap.put(2, new Account("507f1f77bcf86cd799439014", "Carol", "carloMeUp", new ArrayList<>()));
-        exampleTrips.add(ObjectId.get().toString());
-        exampleTrips.add(ObjectId.get().toString());
+        accountMap.put(2, new Account("carloMeUp", "Carol", new ArrayList<>()));
         accountMap.get(2).setTrips(exampleTrips);
 
         exampleTrips = new ArrayList<>();
-        accountMap.put(3, new Account("507f1f77bcf86cd799439015", "Dean", "theDean", new ArrayList<>()));
-        exampleTrips.add(ObjectId.get().toString());
+        accountMap.put(3, new Account("thedean", "Dean", new ArrayList<>()));
         accountMap.get(3).setTrips(exampleTrips);
 
         accountMap.forEach((key, account) -> accountCrudRepository.save(account)
@@ -100,7 +91,6 @@ public class AccountControllerTest {
                 .expectStatus().isOk()
                 .expectBody(Account.class)
                 .value(account -> {
-                    assertEquals(savedAccount.getId(), account.getId());
                     assertEquals(savedAccount.getName(), account.getName());
                     assertEquals(savedAccount.getNickname(), account.getNickname());
                     assertEquals(savedAccount.getTrips(), account.getTrips());
@@ -109,13 +99,12 @@ public class AccountControllerTest {
 
     @Test
     public void getAccountById() {
-        webTestClient.get().uri("/account/" + accountMap.get(0).getId())
+        webTestClient.get().uri("/account/" + accountMap.get(0).getNickname())
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBody(Account.class)
                 .value(account -> {
-                    assertEquals(accountMap.get(0).getId(), account.getId());
                     assertEquals(accountMap.get(0).getName(), account.getName());
                     assertEquals(accountMap.get(0).getNickname(), account.getNickname());
                     assertEquals(accountMap.get(0).getTrips(), account.getTrips());
@@ -124,12 +113,12 @@ public class AccountControllerTest {
 
     @Test
     public void deleteAccountById() {
-        webTestClient.delete().uri("/account/" + defaultId)
+        webTestClient.delete().uri("/account/" + defaultNickname)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(Void.class);
 
-        webTestClient.get().uri("/account/" + defaultId)
+        webTestClient.get().uri("/account/" + defaultNickname)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(Void.class);
@@ -144,7 +133,6 @@ public class AccountControllerTest {
                 .expectBodyList(Account.class)
                 .hasSize(1)
                 .value(account -> {
-                    assertEquals(accountMap.get(1).getId(), account.get(0).getId());
                     assertEquals(accountMap.get(1).getName(), account.get(0).getName());
                     assertEquals(accountMap.get(1).getNickname(), account.get(0).getNickname());
                     assertEquals(accountMap.get(1).getTrips(), account.get(0).getTrips());
@@ -159,7 +147,6 @@ public class AccountControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBody(Account.class)
                 .value(account -> {
-                    assertEquals(accountMap.get(2).getId(), account.getId());
                     assertEquals(accountMap.get(2).getName(), account.getName());
                     assertEquals(accountMap.get(2).getNickname(), account.getNickname());
                     assertEquals(accountMap.get(2).getTrips(), account.getTrips());
@@ -168,7 +155,7 @@ public class AccountControllerTest {
 
     @Test
     public void getAllTripsForAccount() {
-        webTestClient.get().uri("/account/" + accountMap.get(3).getId() + "/trips")
+        webTestClient.get().uri("/account/" + accountMap.get(3).getNickname() + "/trips")
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)

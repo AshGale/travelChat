@@ -1,34 +1,35 @@
 package co.uk.travelChat.repository;
 
 import co.uk.travelChat.model.Enums.ModeOfTransport;
-import co.uk.travelChat.model.Location;
 import co.uk.travelChat.model.Trip;
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.data.couchbase.repository.ReactiveCouchbaseSortingRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 
 import java.time.LocalDateTime;
 
 @Repository
-public interface TripCrudRepository extends ReactiveCrudRepository<Trip, String> {
+public interface TripCrudRepository extends ReactiveCouchbaseSortingRepository<Trip, String> {
 
-    Flux<Trip> findAllByLeaving_timeAndDepartingNameAndMode(
-            long leaving, String departingName, ModeOfTransport mode);
+    //note you can use _before a sub object's field, ie person has talets{name,skill} can use Talents_skill
+
+    Flux<Trip> findAllByLeavingAndDepartingAndMode(
+            Long leaving, String departingName, ModeOfTransport mode);
 
     Flux<Trip> findTripsByLeavingAndArrivingAndDepartingAndDestinationAndMode(
-            LocalDateTime leaving, LocalDateTime arriving, Location departing, Location destination, ModeOfTransport mode);
+            LocalDateTime leaving, LocalDateTime arriving, String departing, String destination, ModeOfTransport mode);
 
-    Flux<Trip> findByDeparting_Name(String departing);
+    Flux<Trip> findByDeparting(String departing);
 
-    Flux<Trip> findByDestination_Name(String destination);
+    Flux<Trip> findByDestination(String destination);
 
-    Flux<Trip> findByDeparting_NameAndDestination_Name(String departing, String destination);
+    Flux<Trip> findByDepartingAndDestination(String departing, String destination);
 
-    Flux<Trip> findByDeparting_NameAndLeaving_time(String departing, long leaving);
+    Flux<Trip> findByDepartingAndLeaving(String departing, Long leaving);
 
-    Flux<Trip> findByDestination_NameAndArriving_time(String destination, long arrivingTime);
+    Flux<Trip> findByDestinationAndArriving(String destination, Long arrivingTime);
 
-    Flux<Trip> findByDeparting_NameAndLeaving_timeAndDestination_NameAndArriving_time(
-            String departing, long leaving, String destination, long arriving);
+    Flux<Trip> findByDepartingAndLeavingAndDestinationAndArriving(
+            String departing, Long leaving, String destination, Long arriving);
 
 }

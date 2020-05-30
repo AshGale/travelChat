@@ -18,28 +18,26 @@ public class AccountService {
         this.accountCrudRepository = accountCrudRepository;
     }
 
-    public Mono<Account> getAccountById(String id){
-        return accountCrudRepository.findById(id);
+    public Flux<Account> getAllAccounts(int pageSize, int offset) {
+        return accountCrudRepository.findPage(pageSize, offset);
     }
 
-    public Mono<Account> saveAccount(Account account){
+    public Mono<Account> getAccountById(String id) {
+        return accountCrudRepository.findById(id.toLowerCase());
+    }
+
+    public Mono<Account> saveAccount(Account account) {
+        account.setName(account.getName().toLowerCase());
         return accountCrudRepository.save(account);
     }
 
     public Flux<Account> getAccountsByName(String name) {
-        return accountCrudRepository.findAccountsByName(name);
+        return accountCrudRepository.getAllByName(name);
     }
 
-    public Mono<Account> getAccountByNickname(String nickname) {
-        return accountCrudRepository.findFirst1ByNicknameIgnoreCase(nickname);
-    }
 
     public Mono<Void> deleteAccountById(String id) {
         return accountCrudRepository.deleteById(id);
-    }
-
-    public Flux<Account> getAllAccounts() {
-        return  accountCrudRepository.findAll();
     }
 
     public Mono<List<String>> getAllTripsForAccountById(String id) {
@@ -47,7 +45,7 @@ public class AccountService {
     }
 
     public Mono<List<String>> getAllTripsForAccountByNickname(String nickname) {
-        return accountCrudRepository.findFirst1ByNicknameIgnoreCase(nickname)
-                .map(account -> account.getTrips());
+        return accountCrudRepository.findById(nickname.toLowerCase())
+                .map(Account::getTrips);
     }
 }

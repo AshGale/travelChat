@@ -2,13 +2,14 @@ package co.uk.travelChat.controller;
 
 import co.uk.travelChat.model.Trip;
 import co.uk.travelChat.service.TripService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-
+@Slf4j
 @RestController
 @RequestMapping(path = "/trip", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TripController {
@@ -34,9 +35,9 @@ public class TripController {
     public Mono<Trip> createTrip(@RequestBody Trip trip) {
         //todo add in check to see if trip exists already, if so return that trip
         //TODO check who is in the attending, then alert those people about the trip
-        System.out.println(trip);
+        log.info(trip.toString());
         Trip returned = tripService.createTrip(trip).block();
-        System.out.println(returned);
+        log.info(returned.toString());
         return Mono.just(returned);
     }
 
@@ -60,7 +61,7 @@ public class TripController {
     @GetMapping("/departing/{departing}/leaving/{leaving}")
     public Flux<Trip> findTripLeavingSamePlaceAndTime(@PathVariable("departing") String departing,
                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                      @PathVariable("leaving") long leaving) {
+                                                      @PathVariable("leaving") Long leaving) {
         System.out.println(leaving);
         return tripService.findByDeparting_NameAndLeaving(departing, leaving);
     }
@@ -79,17 +80,17 @@ public class TripController {
     @GetMapping("/destination/{destination}/arriving/{arriving}")
     public Flux<Trip> findTripsByDestinationTime(@PathVariable("destination") String destination,
                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                 @PathVariable("arriving") long arriving) {
+                                                 @PathVariable("arriving") Long arriving) {
         return tripService.findByDestination_NameAndArriving(destination, arriving);
     }
 
     @GetMapping("/departing/{departing}/leaving/{leaving}/destination/{destination}/arriving/{arriving}")
     public Flux<Trip> findByDepartingDestinationTime(@PathVariable("departing") String departing,
                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                     @PathVariable("leaving") long leaving,
+                                                     @PathVariable("leaving") Long leaving,
                                                      @PathVariable("destination") String destination,
                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                     @PathVariable("arriving") long arriving) {
+                                                     @PathVariable("arriving") Long arriving) {
         return tripService.findByDeparting_NameAndLeavingAndDestination_NameAndArriving(
                 departing, leaving, destination, arriving);
     }

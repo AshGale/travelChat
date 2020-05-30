@@ -2,13 +2,10 @@ package co.uk.travelChat.model;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import javax.validation.constraints.NotNull;
+import org.springframework.data.couchbase.core.mapping.Document;
 
 //https://introcs.cs.princeton.edu/java/44st/Location.java.html
-@Document(collection = "locationTable")
+@Document
 @Data
 @Setter
 @Getter
@@ -17,9 +14,6 @@ import javax.validation.constraints.NotNull;
 public class Location {
 
     @Id
-    private String id;
-    @Indexed(unique = true)
-    @NotNull
     private String name;
     private double longitude;
     private double latitude;
@@ -56,8 +50,7 @@ public class Location {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Location{");
-        sb.append("id='").append(id).append('\'');
-        sb.append(", name='").append(name).append('\'');
+        sb.append("name='").append(name).append('\'');
         sb.append(", longitude=").append(longitude);
         sb.append(", latitude=").append(latitude);
         sb.append('}');

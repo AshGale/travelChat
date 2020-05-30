@@ -1,7 +1,7 @@
 window.addEventListener("load", function() {
 
     //debug
-    document.getElementById("account-name-input").value = "theDean";
+    document.getElementById("account-name-input").value = "thedean";
 
     /*******************testing section************************/
 

@@ -30,8 +30,8 @@ public class AccountServiceTest {
     @MockBean
     AccountCrudRepository accountCrudRepository;
 
-    private static final String ID = "4ecc05e55dd98a436ddcc47c";
-    private static final Account testAccount = new Account(ID, "getAccountById", "getAccountById", new ArrayList<>());
+    private String primaryKey = "nickname";
+    private static final Account testAccount = new Account("nickname", "displayName", new ArrayList<>());
 
     @Before
     public void init() {
@@ -40,14 +40,13 @@ public class AccountServiceTest {
 
     @Test
     public void getAccountById() {
-        Mockito.when(accountCrudRepository.findById(ID))
+        Mockito.when(accountCrudRepository.findById(primaryKey))
                 .thenReturn(Mono.just(testAccount));
 
-        Mono<Account> result = accountService.getAccountById(ID);
+        Mono<Account> result = accountService.getAccountById(primaryKey);
 
         StepVerifier.create(result)
                 .assertNext(account -> {
-                    assertEquals(testAccount.getId(), account.getId());
                     assertEquals(testAccount.getName(), account.getName());
                     assertEquals(testAccount.getNickname(), account.getNickname());
                     assertEquals(testAccount.getTrips(), account.getTrips());
@@ -65,7 +64,6 @@ public class AccountServiceTest {
 
         StepVerifier.create(result)
                 .assertNext(account -> {
-                    assertEquals(testAccount.getId(), account.getId());
                     assertEquals(testAccount.getName(), account.getName());
                     assertEquals(testAccount.getNickname(), account.getNickname());
                     assertEquals(testAccount.getTrips(), account.getTrips());
@@ -76,14 +74,13 @@ public class AccountServiceTest {
 
     @Test
     public void getAccountByName() {
-        Mockito.when(accountCrudRepository.findAccountsByName(testAccount.getName()))
+        Mockito.when(accountCrudRepository.getAllByName(testAccount.getName()))
                 .thenReturn(Flux.just(testAccount));
 
         Flux<Account> result = accountService.getAccountsByName(testAccount.getName());
 
         StepVerifier.create(result)
                 .assertNext(account -> {
-                    assertEquals(testAccount.getId(), account.getId());
                     assertEquals(testAccount.getName(), account.getName());
                     assertEquals(testAccount.getNickname(), account.getNickname());
                     assertEquals(testAccount.getTrips(), account.getTrips());
@@ -92,22 +89,21 @@ public class AccountServiceTest {
                 .verify();
     }
 
-    @Test
-    public void getAccountsByNickname() {
-        Mockito.when(accountCrudRepository.findFirst1ByNicknameIgnoreCase(testAccount.getNickname()))
-                .thenReturn(Mono.just(testAccount));
-
-        Mono<Account> result = accountService.getAccountByNickname(testAccount.getNickname());
-
-        StepVerifier.create(result)
-                .assertNext(account -> {
-                    assertEquals(testAccount.getId(), account.getId());
-                    assertEquals(testAccount.getName(), account.getName());
-                    assertEquals(testAccount.getNickname(), account.getNickname());
-                    assertEquals(testAccount.getTrips(), account.getTrips());
-                })
-                .expectComplete()
-                .verify();
-    }
+//    @Test
+//    public void getAccountsByNickname() {
+//        Mockito.when(accountCrudRepository.findFirst1ByNicknameIgnoreCase(testAccount.getNickname()))
+//                .thenReturn(Mono.just(testAccount));
+//
+//        Mono<Account> result = accountService.getAccountByNickname(testAccount.getNickname());
+//
+//        StepVerifier.create(result)
+//                .assertNext(account -> {
+//                    assertEquals(testAccount.getName(), account.getName());
+//                    assertEquals(testAccount.getNickname(), account.getNickname());
+//                    assertEquals(testAccount.getTrips(), account.getTrips());
+//                })
+//                .expectComplete()
+//                .verify();
+//    }
 
 }

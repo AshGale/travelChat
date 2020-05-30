@@ -3,7 +3,7 @@ package co.uk.travelChat.model;
 import co.uk.travelChat.model.Enums.ModeOfTransport;
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.couchbase.core.mapping.Document;
 
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
@@ -11,7 +11,7 @@ import java.util.Calendar;
 import java.util.List;
 
 
-@Document(collection = "tripTable")
+@Document
 @Data
 @Getter
 @Setter
@@ -26,13 +26,13 @@ public class Trip {
     @Id
     private String id;
     @FutureOrPresent
-    private Calendar leaving;//leaving time for trip//2019-01-01T00:00:00.000+00:00//"2019-01-01T23:00:00"
+    private Long leaving;//leaving time for trip//2019-01-01T00:00:00.000+00:00//"2019-01-01T23:00:00"
     @FutureOrPresent
-    private Calendar arriving;//arriving at time
+    private Long arriving;//arriving at time
     @NotNull
-    private Location departing;//departing location
+    private String departing;//departing String id
     @NotNull
-    private Location destination;//destination trip end
+    private String destination;//destination trip end id
     private ModeOfTransport mode;
     private Boolean discoverable; //  not implemented
     // @UniqueElements
@@ -40,11 +40,8 @@ public class Trip {
     //TODO add for stream line user experience
     //private List<String> invited;
 
-//    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-mm-yyyy HH:ii:ss");
-//    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-    public Trip(String id, Calendar leaving, Calendar arriving,
-                Location departing, Location destination,
+    public Trip(String id, long leaving, long arriving,
+                String departing, String destination,
                 ModeOfTransport mode, boolean discoverable, List attending) {
         this.id = id;
         this.leaving = leaving;
@@ -57,42 +54,9 @@ public class Trip {
     }
 
     public Trip(String id, long leaving, long arriving,
-                Location departing, Location destination,
-                ModeOfTransport mode, boolean discoverable, List attending) {
-        this.id = id;
-        this.leaving = longToCalendar(leaving);
-        this.arriving = longToCalendar(arriving);
-        this.departing = departing;
-        this.destination = destination;
-        this.mode = mode;
-        this.discoverable = discoverable;
-        this.attending = attending;
-    }
-
-    public Trip(String id, Calendar leaving, Calendar arriving,
-                Location departing, Location destination,
+                String departing, String destination,
                 ModeOfTransport mode) {
         this.id = id;
-        this.leaving = leaving;
-        this.arriving = arriving;
-        this.departing = departing;
-        this.destination = destination;
-        this.mode = mode;
-    }
-
-    public Trip(String id, long leaving, long arriving,
-                Location departing, Location destination,
-                ModeOfTransport mode) {
-        this.id = id;
-        this.leaving = longToCalendar(leaving);
-        this.arriving = longToCalendar(arriving);
-        this.departing = departing;
-        this.destination = destination;
-        this.mode = mode;
-    }
-
-    public Trip(Calendar leaving, Calendar arriving,
-                Location departing, Location destination, ModeOfTransport mode) {
         this.leaving = leaving;
         this.arriving = arriving;
         this.departing = departing;
@@ -101,9 +65,9 @@ public class Trip {
     }
 
     public Trip(long leaving, long arriving,
-                Location departing, Location destination, ModeOfTransport mode) {
-        this.leaving = longToCalendar(leaving);
-        this.arriving = longToCalendar(arriving);
+                String departing, String destination, ModeOfTransport mode) {
+        this.leaving = leaving;
+        this.arriving = arriving;
         this.departing = departing;
         this.destination = destination;
         this.mode = mode;

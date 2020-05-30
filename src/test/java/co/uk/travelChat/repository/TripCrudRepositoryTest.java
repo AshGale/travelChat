@@ -14,7 +14,6 @@ import reactor.test.StepVerifier;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,24 +28,23 @@ public class TripCrudRepositoryTest {
     private String start_time = "Sat Mar 28 12:00 GMT 2020";
     private SimpleDateFormat sdf = new SimpleDateFormat(pattern, Locale.ENGLISH);
 
-    private static Calendar DEFAULT_LEAVING;
-    private static Calendar DEFAULT_ARRIVING;
+    private static Long DEFAULT_LEAVING = 1500000000L;
+    private static Long DEFAULT_ARRIVING = 1510000000L;
 
     private static final String DEFAULT_ID = "5d46b4c5966049317459ea50";
 
-    private static final String DEPARTING_ID = "5d46b4c5966049317459ea70";
     private static final String DEPARTING_NAME = "London Victoria";
     private static final Double DEPARTING_LONGITUDE = 51.495213;
     private static final Double DEPARTING_LATITUDE = -0.143897;
     private static final Location DEFAULT_DEPARTING = new Location(
-            DEPARTING_ID, DEPARTING_NAME, DEPARTING_LONGITUDE, DEPARTING_LATITUDE);
+            DEPARTING_NAME, DEPARTING_LONGITUDE, DEPARTING_LATITUDE);
 
     private static final String DESTINATION_ID = "5d46b4c5966049317459ea71";
     private static final String DESTINATION_NAME = "London Bridge Station";
     private static final Double DESTINATION_LONGITUDE = 51.504527;
     private static final Double DESTINATION_LATITUDE = -0.086392;
     private static final Location DEFAULT_DESTINATION = new Location(
-            DESTINATION_ID, DESTINATION_NAME, DESTINATION_LONGITUDE, DESTINATION_LATITUDE);
+            DESTINATION_NAME, DESTINATION_LONGITUDE, DESTINATION_LATITUDE);
 
     private static final ModeOfTransport DEFAULT_MODE_OF_TRANSPORT = ModeOfTransport.Train;
 
@@ -61,14 +59,8 @@ public class TripCrudRepositoryTest {
     @Before
     public void setUp() throws Exception {
 
-        DEFAULT_LEAVING = Calendar.getInstance();
-        DEFAULT_ARRIVING = Calendar.getInstance();
-
-        DEFAULT_LEAVING.setTime(sdf.parse(start_time));
-        DEFAULT_ARRIVING.setTime(sdf.parse(end_time));
-
-        Trip trip = new Trip(DEFAULT_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING,
-                DEFAULT_DESTINATION, DEFAULT_MODE_OF_TRANSPORT, DEFAULT_DISCOVERALBE, DEFAULT_ATTENDING);
+        Trip trip = new Trip(DEFAULT_ID, DEFAULT_LEAVING, DEFAULT_ARRIVING, DEFAULT_DEPARTING.getName(),
+                DEFAULT_DESTINATION.getName(), DEFAULT_MODE_OF_TRANSPORT, DEFAULT_DISCOVERALBE, DEFAULT_ATTENDING);
 
         tripCrudRepository.deleteAll().subscribe();
         tripCrudRepository.save(trip)
@@ -79,8 +71,8 @@ public class TripCrudRepositoryTest {
 
     @Test
     public void findAllByLeavingAndDepartingNameAndMode() {
-        Flux<Trip> result = tripCrudRepository.findAllByLeaving_timeAndDepartingNameAndMode(
-                DEFAULT_LEAVING.getTimeInMillis(), DEFAULT_DEPARTING.getName(), DEFAULT_MODE_OF_TRANSPORT
+        Flux<Trip> result = tripCrudRepository.findAllByLeavingAndDepartingAndMode(
+                DEFAULT_LEAVING, DEFAULT_DEPARTING.getName(), DEFAULT_MODE_OF_TRANSPORT
         );
 
         StepVerifier.create(result)
@@ -100,7 +92,7 @@ public class TripCrudRepositoryTest {
 
     @Test
     public void findByDeparting_Name() {
-        Flux<Trip> result = tripCrudRepository.findByDeparting_Name(DEFAULT_DEPARTING.getName());
+        Flux<Trip> result = tripCrudRepository.findByDeparting(DEFAULT_DEPARTING.getName());
 
         StepVerifier.create(result)
                 .assertNext(trip -> {
@@ -119,8 +111,8 @@ public class TripCrudRepositoryTest {
 
     @Test
     public void findByDestination_Name() {
-        Flux<Trip> result = tripCrudRepository.findByDestination_Name(DEFAULT_DESTINATION.getName());
-        System.out.println(DEFAULT_DESTINATION.getName() + " -> findByDestination_Name: " + result);
+        Flux<Trip> result = tripCrudRepository.findByDestination(DEFAULT_DESTINATION.getName());
+        System.out.println(DEFAULT_DESTINATION.getName() + " -> findByDestination: " + result);
         StepVerifier.create(result)
                 .assertNext(trip -> {
                     assertEquals(DEFAULT_ID, trip.getId());
@@ -138,7 +130,7 @@ public class TripCrudRepositoryTest {
 
     @Test
     public void findByDeparting_NameAndDestination_Name() {
-        Flux<Trip> result = tripCrudRepository.findByDeparting_NameAndDestination_Name(
+        Flux<Trip> result = tripCrudRepository.findByDepartingAndDestination(
                 DEFAULT_DEPARTING.getName(), DEFAULT_DESTINATION.getName());
 
         StepVerifier.create(result)
@@ -158,8 +150,8 @@ public class TripCrudRepositoryTest {
 
     @Test
     public void findByDeparting_NameAndLeaving() {
-        Flux<Trip> result = tripCrudRepository.findByDeparting_NameAndLeaving_time(
-                DEFAULT_DEPARTING.getName(), DEFAULT_LEAVING.getTimeInMillis());
+        Flux<Trip> result = tripCrudRepository.findByDepartingAndLeaving(
+                DEFAULT_DEPARTING.getName(), DEFAULT_LEAVING);
 
         StepVerifier.create(result)
                 .assertNext(trip -> {
@@ -178,8 +170,8 @@ public class TripCrudRepositoryTest {
 
     @Test
     public void findByDestination_NameAndArriving() {
-        Flux<Trip> result = tripCrudRepository.findByDestination_NameAndArriving_time(
-                DEFAULT_DESTINATION.getName(), DEFAULT_ARRIVING.getTimeInMillis());
+        Flux<Trip> result = tripCrudRepository.findByDestinationAndArriving(
+                DEFAULT_DESTINATION.getName(), DEFAULT_ARRIVING);
 
         StepVerifier.create(result)
                 .assertNext(trip -> {
@@ -198,9 +190,9 @@ public class TripCrudRepositoryTest {
 
     @Test
     public void findByDeparting_NameAndLeavingAndDestination_NameAndArriving() {
-        Flux<Trip> result = tripCrudRepository.findByDeparting_NameAndLeaving_timeAndDestination_NameAndArriving_time(
-                DEFAULT_DEPARTING.getName(), DEFAULT_LEAVING.getTimeInMillis(),
-                DEFAULT_DESTINATION.getName(), DEFAULT_ARRIVING.getTimeInMillis());
+        Flux<Trip> result = tripCrudRepository.findByDepartingAndLeavingAndDestinationAndArriving(
+                DEFAULT_DEPARTING.getName(), DEFAULT_LEAVING,
+                DEFAULT_DESTINATION.getName(), DEFAULT_ARRIVING);
 
         StepVerifier.create(result)
                 .assertNext(trip -> {
